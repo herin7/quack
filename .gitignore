@@ -1,4 +1,5 @@
 .venv
+venv
 # Django #
 *.log
 *.pot
@@ -11,6 +12,7 @@ media
 *.bak 
 textstore\user_uploads
 .user_uploads
+user_uploads
 # If you are using PyCharm # 
 # User-specific stuff
 .idea/**/workspace.xml
@@ -21,6 +23,8 @@ textstore\user_uploads
 textstore\user_uploads
 # AWS User-specific
 .idea/**/aws.xml
+textstore/user_uploads/
+.textstore/user_uploads/
 
 # Generated files
 .idea/**/contentModel.xml

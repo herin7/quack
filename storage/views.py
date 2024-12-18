@@ -68,17 +68,53 @@ def user_space(request, custom_url):
         'form': form
     })
 
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import authenticate
+from .models import UserSpace, StoredContent
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.contrib.auth import authenticate
+from django.contrib import messages
+from django.shortcuts import render, get_object_or_404
+from .models import UserSpace, StoredContent
+
 def public_space(request, custom_url):
     # View for public access to user space
     user_space = get_object_or_404(UserSpace, custom_url=custom_url)
-    contents = StoredContent.objects.filter(user_space=user_space)
+    contents = StoredContent.objects.filter(userspace=user_space)
+
+    if request.method == 'POST':
+        # Check for password confirmation
+        password = request.POST.get('password')
+        
+        # Authenticate with the logged-in user
+        user = authenticate(username=request.user.username, password=password)
+        
+        if user is None:
+            # Invalid password
+            messages.error(request, "Incorrect password. Please try again.")
+            return render(request, 'public_space.html', {
+                'userspace': user_space, 
+                'contents': contents, 
+                'error': 'Invalid password',
+                'ask_for_password': True  # Flag to show password prompt
+            })
+        
+        # If password is correct, proceed
+        return render(request, 'public_space.html', {
+            'userspace': user_space, 
+            'contents': contents
+        })
     
     return render(request, 'public_space.html', {
-        'user_space': user_space, 
-        'contents': contents
+        'userspace': user_space, 
+        'contents': contents,
+        'ask_for_password': True  # Flag to show password prompt
     })
+
     
-    
+
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -107,3 +143,11 @@ def authview(request):
     else: 
         form = UserCreationForm()
     return render(request, "registration/signup.html", {"form": form})
+
+
+
+# <h1>{{ userspace.user.username }}'s Space</h1>
+
+# {% for content in contents %}
+
+# {% endfor %}
