@@ -1,0 +1,21 @@
+<h1>Your Space: {{ user_space.custom_url }}</h1>
+
+<h2>Add New Content</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add Content</button>
+</form>
+
+<h2>Stored Contents</h2>
+{% for content in contents %}
+    <div>
+        <h3>{{ content.title }}</h3>
+        {% if content.content_type == 'text' %}
+            <p>{{ content.text_content }}</p>
+        {% else %}
+            <a href="{{ content.file_content.url }}">Download File</a>
+        {% endif %}
+        <small>{{ content.created_at }}</small>
+    </div>
+{% endfor %}
