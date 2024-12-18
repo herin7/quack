@@ -1,0 +1,30 @@
+{% if user.is_authenticated %}
+    <h1>Welcome, {{ user.username }}!</h1>
+    <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
+    
+    <h2>Create Your Custom URL</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Create URL</button>
+    </form>
+
+    {% if user_spaces %}
+        <h2>Your Existing URLs:</h2>
+        <ul>
+            {% for space in user_spaces %}
+                <li>
+                    <a href="{% url 'user_space' space.custom_url %}">
+                        {{ space.custom_url }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% else %}
+<a href="{% url 'login' %}">Login</a>
+<a href="{% url 'authView' %}">Sign Up</a>
+{% endif %}
