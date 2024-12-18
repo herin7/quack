@@ -17,7 +17,7 @@ textstore\user_uploads
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
-
+textstore\user_uploads
 # AWS User-specific
 .idea/**/aws.xml
 
