@@ -1,0 +1,25 @@
+{% if ask_for_password %}
+    <h2>Please enter your password to view this space:</h2>
+    <form method="post">
+        {% csrf_token %}
+        <input type="password" name="password" placeholder="Enter your password" required>
+        <button type="submit">Submit</button>
+    </form>
+{% else %}
+    <h1>{{ userspace.custom_url }} - Public Space</h1>
+    <p>{{ userspace.description }}</p>
+    
+    <h2>Contents:</h2>
+    <ul>
+        {% for content in contents %}
+        <div>
+            <h3>{{ content.title }}</h3>
+            {% if content.content_type == 'text' %}
+                <p>{{ content.text_content }}</p>
+            {% else %}
+                <a href="{{ content.file_content.url }}">Download File</a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </ul>
+{% endif %}

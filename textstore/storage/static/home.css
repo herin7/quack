@@ -1,0 +1,49 @@
+/* home.css */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #333;
+    color: white;
+    padding: 1rem;
+}
+
+header nav a {
+    color: white;
+    margin-right: 10px;
+    text-decoration: none;
+}
+
+header nav a:hover {
+    text-decoration: underline;
+}
+
+.main {
+    padding: 2rem;
+}
+
+.welcome-section h1 {
+    font-size: 2rem;
+    color: #333;
+}
+
+.url-creation-form, .url-list {
+    margin-top: 20px;
+}
+
+.logout-button, .create-url-button, .auth-link {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.logout-button:hover, .create-url-button:hover, .auth-link:hover {
+    background-color: #0056b3;
+}

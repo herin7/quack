@@ -11,11 +11,45 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+from urllib.parse import parse_qsl, urljoin, urlparse
+# Add these at the top of your settings.py
+from os import getenv
+from dotenv import load_dotenv
+from urllib.parse import urlparse
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+# Parse the database URL
+tmpPostgres = urlparse(os.getenv("DATABASE_URL", 'postgresql://neondb_owner:Nk9BVdva0DOK@ep-lively-sun-a5eq8g22.us-east-2.aws.neon.tech/neondb?sslmode=require'))
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': tmpPostgres.path.lstrip('/'),  # Remove leading slash
+        'USER': tmpPostgres.username,
+        'PASSWORD': tmpPostgres.password,
+        'HOST': tmpPostgres.hostname,
+        'PORT': tmpPostgres.port or 5432,  # Use parsed port or default to 5432
+        'OPTIONS': {
+            'sslmode': 'require',  # Add SSL mode from the connection string
+        }
+    }
+}
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'storage/static',  # Point to the static folder in your app
+]
+# In production, you can use STATIC_ROOT to collect all static files
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
+# Start a Django shell
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -77,12 +111,12 @@ LOGOUT_REDIRECT_URL = '/'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/sett    ings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 # Password validation
@@ -119,7 +153,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
