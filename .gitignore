@@ -10,6 +10,7 @@ media
 # Backup files # 
 *.bak 
 textstore\user_uploads
+.user_uploads
 # If you are using PyCharm # 
 # User-specific stuff
 .idea/**/workspace.xml
