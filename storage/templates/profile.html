@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="profile-container">
+        <h1>{{ user.username }}'s Profile</h1>
+
+        <!-- Profile Photo -->
+        <div class="profile-photo">
+            {% if user_profile.photo %}
+                <img src="{{ user_profile.photo.url }}" alt="{{ user.username }}'s Profile Picture" class="profile-img">
+            {% else %}
+                <img src="/static/default-profile-pic.jpg" alt="Default Profile Picture" class="profile-img">
+            {% endif %}
+        </div>
+
+        <!-- Bio -->
+        <div class="profile-bio">
+            <h2>Bio:</h2>
+            <p>{{ user_profile.bio|default:"No bio provided" }}</p>
+        </div>
+
+        <!-- Number of URLs -->
+        <div class="profile-urls">
+            <h2>Your URLs:</h2>
+            <p>You have created {{ num_urls }} custom URL{{ num_urls|pluralize }}.</p>
+            <ul>
+                {% for space in user_spaces %}
+                    <li>
+                        <a href="{% url 'user_space' space.custom_url %}">{{ space.custom_url }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Number of Contents -->
+        <div class="profile-contents">
+            <h2>Your Content:</h2>
+            <p>You have uploaded {{ num_contents }} piece{{ num_contents|pluralize }} of content.</p>
+            <ul>
+                {% for content in stored_contents %}
+                    <li>{{ content.title }} ({{ content.content_type }})</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Password Section -->
+        <div class="profile-password">
+            <h2>Change Your Password:</h2>
+            <a href="{% url 'password_change' %}">Change Password</a>
+        </div>
+
+        <!-- Profile Update Form -->
+        <div class="profile-update">
+            <h2>Update Your Profile:</h2>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- Photo field -->
+                <div>
+                    <label for="id_photo">Photo:</label>
+                    {% if user_profile.photo %}
+                        <p>Currently: {{ user_profile.photo.url }}</p>
+                        <label for="id_photo">Clear:</label>
+                        <input type="checkbox" name="clear_photo" id="clear_photo"> Clear photo
+                    {% else %}
+                        <p>No photo uploaded.</p>
+                    {% endif %}
+                    {{ profile_form.photo }}
+                </div>
+                
+                <!-- Bio field -->
+                <div>
+                    <label for="id_bio">Bio:</label>
+                    {{ profile_form.bio }}
+                </div>
+
+                <button type="submit">Update Profile</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,148 @@
+/* Base Styling */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--accent-light-4);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+}
+
+/* Form Styling */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+form input, form select, form textarea, form button {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid var(--accent-light-2);
+    font-size: 1rem;
+    background-color: #f9f9f9;
+}
+
+form button {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+form button:hover {
+    background-color: var(--primary-dark);
+    transform: scale(1.05);
+}
+
+/* Form Help Text */
+label {
+    margin-bottom: 8px;
+    color: var(--primary-dark);
+}
+
+small {
+    font-size: 0.8rem;
+    color: var(--accent-light-3);
+}
+
+/* Content Display */
+h1, h2 {
+    text-align: center;
+    color: var(--primary-dark);
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+div.content-card {
+    background: white;
+    margin: 20px auto;
+    padding: 15px;
+    max-width: 80%;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid var(--primary-dark);
+}
+
+div.content-card h3 {
+    color: var(--primary-dark-2);
+    font-size: 1.5rem;
+}
+
+div.content-card p {
+    font-size: 1rem;
+    color: var(--accent-light-2);
+}
+
+div.content-card a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+div.content-card a:hover {
+    text-decoration: underline;
+}
+
+div.content-card small {
+    display: block;
+    text-align: right;
+    color: var(--accent-light-3);
+    font-size: 0.8rem;
+    margin-top: 10px;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    form {
+        width: 90%;
+    }
+    
+    div.content-card {
+        max-width: 95%;
+    }
+
+    div.content-card h3 {
+        font-size: 1.3rem;
+    }
+
+    div.content-card p {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    form {
+        width: 100%;
+    }
+    
+    div.content-card {
+        max-width: 100%;
+    }
+
+    div.content-card h3 {
+        font-size: 1.2rem;
+    }
+
+    div.content-card p {
+        font-size: 0.85rem;
+    }
+}

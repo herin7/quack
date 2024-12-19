@@ -1,3 +1,6 @@
+{% extends 'base.html' %}
+
+{% block content %}
 {% if ask_for_password %}
     <h2>Please enter your password to view this space:</h2>
     <form method="post">
@@ -23,3 +26,4 @@
         {% endfor %}
     </ul>
 {% endif %}
+{% endblock %}

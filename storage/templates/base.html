@@ -6,29 +6,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}My Website{% endblock %}</title>
+    
+    {% block heads %}
     <link rel="stylesheet" href="{% static 'home.css' %}">
+    {% endblock %}
 </head>
 <body>
-    <header>
-        <nav>
-            <a href="{% url 'home' %}">Home</a>
-            {% if user.is_authenticated %}
-                <a href="{% url 'logout' %}">Logout</a>
-            {% else %}
-                <a href="{% url 'login' %}">Login</a>
-                <a href="{% url 'authView' %}">Sign Up</a>
-            {% endif %}
-        </nav>
-    </header>
-    
-    <main>
-        {% block content %}
-        <!-- Content from the child template will be loaded here -->
-        {% endblock %}
-    </main>
+    <main class="app">
+        <header class="appbar appbar--hero">
+            <div class="appbar__title">
+                <h1 class="appbar__title-text">
+                    {% block header_title %} quacker {% endblock %}
+                </h1>
+                {% if user.is_authenticated %}
+                    <p>{{ user.email }}</p>
+                {% endif %}
+            </div>
+            <div class="appbar__controls-right">
+                {% if user.is_authenticated %}
+                    <button class="button" onclick="window.location.href='{% url 'logout' %}">
+                        <svg width="18" height="17" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15.75 3.125H3.9375C3.62109 3.125 3.375 3.40625 3.375 3.6875C3.375 4.00391 3.62109 4.25 3.9375 4.25H15.75C16.3477 4.25 16.875 4.77734 16.875 5.375V14.375C16.875 15.0078 16.3477 15.5 15.75 15.5H3.375C2.10938 15.5 1.125 14.5156 1.125 13.25V4.25C1.125 3.01953 2.10938 2 3.375 2H16.3125C16.5938 2 16.875 1.75391 16.875 1.4375C16.875 1.15625 16.5938 0.875 16.3125 0.875H3.375C1.47656 0.875 0 2.38672 0 4.25V13.25C0 15.1484 1.47656 16.625 3.375 16.625H15.75C16.9805 16.625 18 15.6406 18 14.375V5.375C18 4.14453 16.9805 3.125 15.75 3.125ZM14.3438 9.875C14.3438 9.41797 13.957 9.03125 13.5 9.03125C13.0078 9.03125 12.6562 9.41797 12.6562 9.875C12.6562 10.3672 13.0078 10.7188 13.5 10.7188C13.957 10.7188 14.3438 10.3672 14.3438 9.875Z" fill="white"/>
+                        </svg>
+                        Logout
+                    </button>
+                {% else %}
+                    <button class="button" onclick="window.location.href='{% url 'login' %}'">Login</button>
+                    <button class="button" onclick="window.location.href='{% url 'authView' %}'">Sign Up</button>
+                {% endif %}
+            </div>
+        </header>
 
-    <footer>
-        <p>&copy; 2024 My Website</p>
-    </footer>
+        <section class="content backdrop scrollview">
+            {% block content %}
+            <!-- Content from the child template will be loaded here -->
+            {% endblock %}
+        </section>
+
+        <nav class="navigation">
+            <a href="{% url 'home' %}" class="navigation__item {% if request.resolver_match.url_name == 'home' %}navigation--item-current{% endif %}">
+                <svg class="navigation__item-icon" width="21" height="19" viewBox="0 0 21 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20.5 9.28516C20.5 9.10938 20.4297 8.96875 20.2891 8.82812L10.7266 0.390625C10.6211 0.320312 10.4805 0.285156 10.375 0.285156C10.2344 0.285156 10.0938 0.320312 9.98828 0.390625L0.425781 8.82812C0.285156 8.96875 0.25 9.10938 0.25 9.28516C0.25 9.56641 0.496094 9.8125 0.8125 9.8125C0.917969 9.8125 1.05859 9.77734 1.16406 9.67188L2.5 8.51172V16.5625C2.5 17.5117 3.23828 18.25 4.1875 18.25H7C7.91406 18.25 8.6875 17.5117 8.6875 16.5625V12.625H12.0625V16.5625C12.0625 17.5117 12.8008 18.25 13.75 18.25H16.5625C17.4766 18.25 18.25 17.5117 18.25 16.5625V8.51172L19.5508 9.67188C19.6562 9.77734 19.7969 9.8125 19.9375 9.8125C20.2188 9.8125 20.5 9.56641 20.5 9.28516Z" fill="white"/>
+                </svg>
+                <p class="navigation__item-label">Home</p>
+            </a>
+            <a href="#" class="navigation__item">
+                <svg class="navigation__item-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 0.8125C4.32422 0.8125 0.5625 4.60938 0.5625 9.25C0.5625 13.9258 4.32422 17.6875 9 17.6875C13.6406 17.6875 17.4375 13.9258 17.4375 9.25C17.4375 4.60938 13.6406 0.8125 9 0.8125Z" fill="#0F3561"/>
+                </svg>
+                <p class="navigation__item-label">History</p>
+            </a>
+        </nav>
+    </main>
 </body>
 </html>

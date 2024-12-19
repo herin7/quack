@@ -1,3 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% block heads %}
+
+<link rel="stylesheet" href="{% static 'home.css' %}">
+<link rel="stylesheet" href="{% static 'space.css' %}">
+
+{% endblock %}
+
 <h1>Your Space: {{ user_space.custom_url }}</h1>
 
 <h2>Add New Content</h2>
@@ -19,3 +30,5 @@
         <small>{{ content.created_at }}</small>
     </div>
 {% endfor %}
+
+{% endblock %}
