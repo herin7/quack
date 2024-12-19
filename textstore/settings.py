@@ -60,7 +60,7 @@ SECRET_KEY = 'django-insecure-j$u01nqg3n5@_wj-q42xq8r9g2z4%wbu3t4cprq#0_9=hltn%j
 DEBUG = True
 
 # ALLOWED_HOSTS = []
-ALLOWED_HOSTS = ['quack-4fvm.onrender.com']
+ALLOWED_HOSTS = ['quack-4fvm.onrender.com','127.0.0.1']
 
 
 # Application definition
