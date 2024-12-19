@@ -54,13 +54,11 @@ def delete_space(request, custom_url):
 
 @login_required
 def user_space(request, custom_url):
-    # Get the UserSpace or return 404
     user_space = get_object_or_404(
         UserSpace, 
         Q(custom_url=custom_url) & Q(user=request.user)
     )
     
-    # Handle content addition
     if request.method == 'POST':
         form = StoredContentForm(request.POST, request.FILES)
         if form.is_valid():
@@ -72,7 +70,6 @@ def user_space(request, custom_url):
     else:
         form = StoredContentForm()
     
-    # Get stored contents for this space
     contents = StoredContent.objects.filter(userspace=user_space)
     
     return render(request, 'user_space.html', {
@@ -83,19 +80,15 @@ def user_space(request, custom_url):
 
 
 def public_space(request, custom_url):
-    # View for public access to user space
     user_space = get_object_or_404(UserSpace, custom_url=custom_url)
     contents = StoredContent.objects.filter(userspace=user_space)
 
     if request.method == 'POST':
-        # Check for password confirmation
         password = request.POST.get('password')
         
-        # Authenticate with the logged-in user
         user = authenticate(username=request.user.username, password=password)
         
         if user is None:
-            # Invalid password
             messages.error(request, "Incorrect password. Please try again.")
             return render(request, 'public_space.html', {
                 'userspace': user_space, 
@@ -134,7 +127,7 @@ from django.contrib.auth import login
 from django.contrib import messages
 from .forms import UserProfileCreationForm
 from django.contrib.auth.models import User
-from .models import UserProfile  # Assuming your profile model is named UserProfile
+from .models import UserProfile  
 
 def authview(request): 
     if request.method == "POST":
@@ -142,9 +135,7 @@ def authview(request):
         if form.is_valid(): 
             user = form.save()  # Create the user
             
-            # Check if the user already has a profile
             if not UserProfile.objects.filter(user=user).exists():
-                # Create the UserProfile if it doesn't exist
                 UserProfile.objects.create(user=user)
 
             login(request, user)  # Log the user in after successful registration
@@ -166,10 +157,8 @@ from django.http import Http404
 @login_required
 def user_profile(request):
     try:
-        # Get the user's profile and the URLs associated with them
         user_profile = UserProfile.objects.get(user=request.user)
     except UserProfile.DoesNotExist:
-        # If no profile exists, create a default profile (optional)
         user_profile = UserProfile.objects.create(user=request.user)
     
     user_spaces = UserSpace.objects.filter(user=request.user)
