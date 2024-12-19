@@ -74,7 +74,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'storage'
 ]
-
+CSRF_TRUSTED_ORIGINS = [
+    'https://quack-2.onrender.com',  # Add your app's domain here
+]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
