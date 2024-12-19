@@ -1,9 +1,18 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-    <div class="profile-container">
-        <h1>{{ user.username }}'s Profile</h1>
+{% block heads %}
 
+<link rel="stylesheet" href="{% static 'home.css' %}">
+<link rel="stylesheet" href="{% static 'profile.css' %}">
+
+{% endblock %}
+
+<div class="profile-container">
+    <h1 class="profile-header">{{ user.username }}'s Profile</h1>
+
+    <div class="profile-content">
         <!-- Profile Photo -->
         <div class="profile-photo">
             {% if user_profile.photo %}
@@ -13,20 +22,20 @@
             {% endif %}
         </div>
 
-        <!-- Bio -->
+        <!-- Bio Section -->
         <div class="profile-bio">
-            <h2>Bio:</h2>
+            <h2 class="section-title">Bio:</h2>
             <p>{{ user_profile.bio|default:"No bio provided" }}</p>
         </div>
 
         <!-- Number of URLs -->
         <div class="profile-urls">
-            <h2>Your URLs:</h2>
+            <h2 class="section-title">Your URLs:</h2>
             <p>You have created {{ num_urls }} custom URL{{ num_urls|pluralize }}.</p>
-            <ul>
+            <ul class="url-list">
                 {% for space in user_spaces %}
                     <li>
-                        <a href="{% url 'user_space' space.custom_url %}">{{ space.custom_url }}</a>
+                        <a href="{% url 'user_space' space.custom_url %}" class="url-item">{{ space.custom_url }}</a>
                     </li>
                 {% endfor %}
             </ul>
@@ -34,32 +43,28 @@
 
         <!-- Number of Contents -->
         <div class="profile-contents">
-            <h2>Your Content:</h2>
+            <h2 class="section-title">Your Content:</h2>
             <p>You have uploaded {{ num_contents }} piece{{ num_contents|pluralize }} of content.</p>
-            <ul>
-                {% for content in stored_contents %}
-                    <li>{{ content.title }} ({{ content.content_type }})</li>
-                {% endfor %}
-            </ul>
+   
         </div>
 
         <!-- Password Section -->
         <div class="profile-password">
-            <h2>Change Your Password:</h2>
-            <a href="{% url 'password_change' %}">Change Password</a>
+            <h2 class="section-title">Change Your Password:</h2>
+            <a href="{% url 'password_change' %}" class="change-password-btn">Change Password</a>
         </div>
 
         <!-- Profile Update Form -->
         <div class="profile-update">
-            <h2>Update Your Profile:</h2>
+            <h2 class="section-title">Update Your Profile:</h2>
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 
                 <!-- Photo field -->
-                <div>
+                <div class="form-group">
                     <label for="id_photo">Photo:</label>
                     {% if user_profile.photo %}
-                        <p>Currently: {{ user_profile.photo.url }}</p>
+                        <p>Currently: <a href="{{ user_profile.photo.url }}" target="_blank">View Photo</a></p>
                         <label for="id_photo">Clear:</label>
                         <input type="checkbox" name="clear_photo" id="clear_photo"> Clear photo
                     {% else %}
@@ -69,13 +74,14 @@
                 </div>
                 
                 <!-- Bio field -->
-                <div>
+                <div class="form-group">
                     <label for="id_bio">Bio:</label>
                     {{ profile_form.bio }}
                 </div>
 
-                <button type="submit">Update Profile</button>
+                <button type="submit" class="submit-btn">Update Profile</button>
             </form>
         </div>
     </div>
+</div>
 {% endblock %}

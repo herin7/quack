@@ -1,4 +1,12 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block heads %}
+
+<link rel="stylesheet" href="{% static 'home.css' %}">
+<link rel="stylesheet" href="{% static 'public.css' %}">
+
+{% endblock %}
 
 {% block content %}
 {% if ask_for_password %}
@@ -9,7 +17,7 @@
         <button type="submit">Submit</button>
     </form>
 {% else %}
-    <h1>{{ userspace.custom_url }} - Public Space</h1>
+    <h1>{{ userspace.custom_url }} - Your own space</h1>
     <p>{{ userspace.description }}</p>
     
     <h2>Contents:</h2>
@@ -23,7 +31,7 @@
                 <a href="{{ content.file_content.url }}">Download File</a>
             {% endif %}
         </div>
-        {% endfor %}
+        {% endfor %}    
     </ul>
 {% endif %}
 {% endblock %}

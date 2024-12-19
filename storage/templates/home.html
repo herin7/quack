@@ -10,10 +10,7 @@
     {% if user.is_authenticated %}
         <div class="welcome-section">
             <h1>Welcome, {{ user.username }}!</h1>
-            <form method="POST" action="{% url 'logout' %}">
-                {% csrf_token %}
-                <button type="submit" class="logout-button">Logout</button>
-            </form>
+         
         </div>
 
         <div class="url-creation-section">
