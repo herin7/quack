@@ -59,7 +59,8 @@ SECRET_KEY = 'django-insecure-j$u01nqg3n5@_wj-q42xq8r9g2z4%wbu3t4cprq#0_9=hltn%j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['quack-4fvm.onrender.com']
 
 
 # Application definition
