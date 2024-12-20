@@ -1,17 +1,3 @@
-/* Base Styling */
-body {
-    font-family: 'Poppins', sans-serif;
-    background-color: var(--accent-light-4);
-    color: var(--text-color);
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    overflow-x: hidden; /* Prevent horizontal scrolling */
-}
 
 /* Heading Styling */
 h1, h2 {
@@ -69,13 +55,12 @@ form input[type="file"] {
     border: 1px solid var(--accent-light-2);
     background-color: #f9f9f9;
 }
-
-/* Submit Button Styling */
+/* Button Styling */
 form button {
     width: 100%;
     padding: 12px;
-    background-color: var(--primary);
-    color: white;
+    background-color: var(--primary);  /* Primary button color */
+    color: white;  /* Text color */
     border: none;
     border-radius: 5px;
     font-size: 1rem;
@@ -83,9 +68,27 @@ form button {
     transition: all 0.3s ease;
 }
 
+/* Hover effect for the button */
 form button:hover {
-    background-color: var(--primary-dark);
+    background-color: var(--primary-dark);  /* Darker color on hover */
     transform: scale(1.05);
+}
+
+/* Text Color for the Logout Button */
+.appbar__controls-right form button {
+    background-color: transparent;  /* Transparent background */
+    color: #333;  /* Dark text color */
+    border: none;
+    text-transform: uppercase;
+    font-weight: bold;
+    padding: 8px 15px;
+    font-size: 1rem;
+}
+
+/* Hover effect for the Logout Button */
+.appbar__controls-right form button:hover {
+    background-color: #ff5c5c;  /* Red background on hover */
+    color: white;  /* Text color on hover */
 }
 
 /* Help Text */
@@ -131,4 +134,32 @@ small {
     form button {
         font-size: 0.85rem; /* Further adjust font size for very small screens */
     }
+}
+
+
+.copy-container {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#shareable-link {
+    flex: 1;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#copy-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#copy-btn:hover {
+    background-color: #0056b3;
 }

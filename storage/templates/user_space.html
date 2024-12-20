@@ -3,13 +3,21 @@
 
 {% block content %}
 {% block heads %}
-
 <link rel="stylesheet" href="{% static 'home.css' %}">
 <link rel="stylesheet" href="{% static 'space.css' %}">
-
 {% endblock %}
 
 <h1>Your Space: {{ user_space.custom_url }}</h1>
+
+<!-- Display the shareable link for /view route -->
+<div class="copy-container">
+    <input 
+        type="text" 
+        id="shareable-link" 
+        value="{{ request.scheme }}://{{ request.get_host }}/view/{{ user_space.custom_url }}/" 
+        readonly>
+    <button id="copy-btn">Copy Link</button>
+</div>
 
 <h2>Add New Content</h2>
 <form method="post" enctype="multipart/form-data">
@@ -30,5 +38,18 @@
         <small>{{ content.created_at }}</small>
     </div>
 {% endfor %}
+
+<script>
+    document.getElementById("copy-btn").addEventListener("click", function() {
+        const linkInput = document.getElementById("shareable-link");
+        linkInput.select();
+        linkInput.setSelectionRange(0, 99999); // For mobile devices
+        navigator.clipboard.writeText(linkInput.value).then(() => {
+            alert("Link copied to clipboard!");
+        }).catch(() => {
+            alert("Failed to copy the link.");
+        });
+    });
+</script>
 
 {% endblock %}

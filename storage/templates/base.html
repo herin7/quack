@@ -18,9 +18,6 @@
                 <h1 class="appbar__title-text">
                     {% block header_title %} quacker {% endblock %}
                 </h1>
-                {% if user.is_authenticated %}
-                    <p>{{ user.email }}</p>
-                {% endif %}
             </div>
             <div class="appbar__controls-right">
                 {% if user.is_authenticated %}
@@ -30,14 +27,13 @@
                         Logout
                     </button>
                 </form>
-
                 {% else %}
-                    <button class="button" onclick="window.location.href='{% url 'login' %}'">Login</button>
-                    <button class="button" onclick="window.location.href='{% url 'authView' %}'">Sign Up</button>
+                <button class="button" onclick="window.location.href='{% url 'login' %}'">Login</button>
+                <button class="button" onclick="window.location.href='{% url 'authView' %}'">Sign Up</button>
                 {% endif %}
             </div>
         </header>
-
+        
         <section class="content backdrop scrollview">
             {% block content %}
             <!-- Content from the child template will be loaded here -->
