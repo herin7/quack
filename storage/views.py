@@ -10,39 +10,37 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import UserSpace, StoredContent, UserProfile
 
-
 @login_required
 def home(request):
     user_spaces = UserSpace.objects.filter(user=request.user)
     if request.method == 'POST':
         form = CustomURLForm(request.POST)
         if form.is_valid():
-            # Check if custom URL already exists
+            # Check if custom URL already exists for the current user
             custom_url = form.cleaned_data['custom_url']
-            
-            # Check if URL is already taken
-            if UserSpace.objects.filter(custom_url=custom_url).exists():
-                messages.error(request, 'This custom URL is already taken. Please choose another.')
+
+            if UserSpace.objects.filter(user=request.user, custom_url=custom_url).exists():
+                messages.error(request, 'You already have a space with this custom URL.')
                 return render(request, 'home.html', {
-                    'form': form, 
+                    'form': form,
                     'user_spaces': user_spaces
                 })
-            
-            # Create new user space
+
+            # If URL exists for other users, allow current user to create it
             user_space = form.save(commit=False)
             user_space.user = request.user
             user_space.save()
-            
+
             messages.success(request, 'Custom URL created successfully!')
             return redirect('user_space', custom_url=custom_url)
     else:
         form = CustomURLForm()
-    
+
     return render(request, 'home.html', {
-        'form': form, 
+        'form': form,
         'user_spaces': user_spaces
     })
-    
+
 @login_required
 def delete_space(request, custom_url):
     user_space = get_object_or_404(UserSpace, custom_url=custom_url, user=request.user)
@@ -80,7 +78,7 @@ def user_space(request, custom_url):
 
 
 def public_space(request, custom_url):
-    user_space = get_object_or_404(UserSpace, custom_url=custom_url)
+    user_space = get_object_or_404(UserSpace, Q(custom_url=custom_url) & Q(user=request.user))
     contents = StoredContent.objects.filter(userspace=user_space)
 
     if request.method == 'POST':
