@@ -1,3 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block heads %}
+
+<link rel="stylesheet" href="{% static 'home.css' %}">
+<link rel="stylesheet" href="{% static 'auth.css' %}">
+
+{% endblock %}
+{% block content %}
 <form method="POST">
     {% csrf_token %}
     {% if messages %}
@@ -24,3 +33,5 @@
     {{ form.as_p }}
     <button type="submit">Sign Up</button>
 </form>
+
+{% endblock %}

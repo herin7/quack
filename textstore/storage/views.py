@@ -4,8 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login ,authenticate
 from django.contrib import messages
 from django.db.models import Q
-from .models import UserSpace, StoredContent
-from .forms import CustomURLForm, StoredContentForm
+from .forms import CustomURLForm, StoredContentForm, UserProfileUpdateForm
+from django.shortcuts import render
+from .models import UserSpace, StoredContent, UserProfile
 
 @login_required
 def home(request):
@@ -38,16 +39,23 @@ def home(request):
         'form': form, 
         'user_spaces': user_spaces
     })
+    
+@login_required
+def delete_space(request, custom_url):
+    user_space = get_object_or_404(UserSpace, custom_url=custom_url, user=request.user)
+    if request.method == 'POST':
+        user_space.delete()
+        messages.success(request, f'The URL "{custom_url}" has been deleted.')
+        return redirect('home')
+    return redirect('home')
 
 @login_required
 def user_space(request, custom_url):
-    # Get the UserSpace or return 404
     user_space = get_object_or_404(
         UserSpace, 
         Q(custom_url=custom_url) & Q(user=request.user)
     )
     
-    # Handle content addition
     if request.method == 'POST':
         form = StoredContentForm(request.POST, request.FILES)
         if form.is_valid():
@@ -55,11 +63,10 @@ def user_space(request, custom_url):
             content.userspace = user_space
             content.save()
             messages.success(request, 'Content added successfully!')
-            return redirect('user_space', custom_url=custom_url)
+            return redirect('user_space',custom_url=custom_url)
     else:
         form = StoredContentForm()
     
-    # Get stored contents for this space
     contents = StoredContent.objects.filter(userspace=user_space)
     
     return render(request, 'user_space.html', {
@@ -68,40 +75,25 @@ def user_space(request, custom_url):
         'form': form
     })
 
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import authenticate
-from .models import UserSpace, StoredContent
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.contrib.auth import authenticate
-from django.contrib import messages
-from django.shortcuts import render, get_object_or_404
-from .models import UserSpace, StoredContent
 
 def public_space(request, custom_url):
-    # View for public access to user space
     user_space = get_object_or_404(UserSpace, custom_url=custom_url)
     contents = StoredContent.objects.filter(userspace=user_space)
 
     if request.method == 'POST':
-        # Check for password confirmation
         password = request.POST.get('password')
         
-        # Authenticate with the logged-in user
         user = authenticate(username=request.user.username, password=password)
         
         if user is None:
-            # Invalid password
             messages.error(request, "Incorrect password. Please try again.")
             return render(request, 'public_space.html', {
                 'userspace': user_space, 
                 'contents': contents, 
                 'error': 'Invalid password',
-                'ask_for_password': True  # Flag to show password prompt
+                'ask_for_password': True  
             })
         
-        # If password is correct, proceed
         return render(request, 'public_space.html', {
             'userspace': user_space, 
             'contents': contents
@@ -110,10 +102,9 @@ def public_space(request, custom_url):
     return render(request, 'public_space.html', {
         'userspace': user_space, 
         'contents': contents,
-        'ask_for_password': True  # Flag to show password prompt
+        'ask_for_password': True  
     })
 
-    
 
 def login_view(request):
     if request.method == 'POST':
@@ -130,24 +121,51 @@ def login_view(request):
     
 def authview(request): 
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = UserCreationForm(request.POST, request.FILES)
         if form.is_valid(): 
-            user = form.save()
+            user = form.save()  
+            
+            if not UserProfile.objects.filter(user=user).exists():
+                UserProfile.objects.create(user=user)
+
             login(request, user) 
             messages.success(request, "Registration successful!")
-            return redirect("/")
+            return redirect("/") 
         else:
-            # If form is not valid, pass the form with errors back to the template
             messages.error(request, "Please correct the errors below.")
             return render(request, "registration/signup.html", {"form": form})
     else: 
-        form = UserCreationForm()
+        form = UserCreationForm() 
     return render(request, "registration/signup.html", {"form": form})
 
 
 
-# <h1>{{ userspace.user.username }}'s Space</h1>
+@login_required
+def user_profile(request):
+    try:
+        user_profile = UserProfile.objects.get(user=request.user)
+    except UserProfile.DoesNotExist:
+        user_profile = UserProfile.objects.create(user=request.user)
+    
+    user_spaces = UserSpace.objects.filter(user=request.user)
+    stored_contents = StoredContent.objects.filter(userspace__user=request.user)
 
-# {% for content in contents %}
+    num_urls = user_spaces.count()
+    num_contents = stored_contents.count()
 
-# {% endfor %}
+    if request.method == 'POST':
+        profile_form = UserProfileUpdateForm(request.POST, request.FILES, instance=user_profile)
+        if profile_form.is_valid():
+            profile_form.save()
+            return redirect('user_profile')  
+    else:
+        profile_form = UserProfileUpdateForm(instance=user_profile)
+
+    return render(request, 'profile.html', {
+        'user_profile': user_profile,
+        'user_spaces': user_spaces,
+        'stored_contents': stored_contents,
+        'num_urls': num_urls,
+        'num_contents': num_contents,
+        'profile_form': profile_form,  
+    })

@@ -1,25 +1,46 @@
-{% if ask_for_password %}
-    <h2>Please enter your password to view this space:</h2>
-    <form method="post">
-        {% csrf_token %}
-        <input type="password" name="password" placeholder="Enter your password" required>
-        <button type="submit">Submit</button>
-    </form>
-{% else %}
-    <h1>{{ userspace.custom_url }} - Public Space</h1>
-    <p>{{ userspace.description }}</p>
-    
-    <h2>Contents:</h2>
-    <ul>
-        {% for content in contents %}
-        <div>
-            <h3>{{ content.title }}</h3>
-            {% if content.content_type == 'text' %}
-                <p>{{ content.text_content }}</p>
-            {% else %}
-                <a href="{{ content.file_content.url }}">Download File</a>
-            {% endif %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block heads %}
+    <link rel="stylesheet" href="{% static 'home.css' %}">
+    <link rel="stylesheet" href="{% static 'public.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    {% if ask_for_password %}
+        <h2>Please enter your password to view this space:</h2>
+        <form method="post">
+            {% csrf_token %}
+            <input type="password" name="password" placeholder="Enter your password" required>
+            <button type="submit">Submit</button>
+        </form> 
+        {% if error %}
+            <p style="color:red; text-align:center;">{{ error }}</p>
+        {% endif %}
+    {% else %}
+        <h1>{{ userspace.custom_url }} - Your own space</h1>
+        <p>{{ userspace.description }}</p>
+        
+        <h2>Contents:</h2>
+        <div class="content-container">
+            {% for content in contents %}
+                <div class="content-item">
+                    <h3>{{ content.title }}</h3>
+                    
+                    {% if content.content_type == 'text' %}
+                        <div class="text-content">
+                            <p>{{ content.text_content }}</p>
+                        </div>
+                    {% else %}
+                        <div class="file-content">
+                            <a href="{{ content.file_content.url }}" class="download-link">
+                                <i class="fas fa-download"></i> Download File
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </ul>
-{% endif %}
+    {% endif %}
+{% endblock %}

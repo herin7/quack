@@ -1,3 +1,13 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block heads %}
+
+<link rel="stylesheet" href="{% static 'home.css' %}">
+<link rel="stylesheet" href="{% static 'auth.css' %}">
+
+{% endblock %}
+{% block content %}
 <form method="POST">
     {% csrf_token %}
     <input type="text" name="username" placeholder="Username" required>
@@ -10,3 +20,5 @@
         {% endfor %}
     {% endif %}
 </form>
+
+{% endblock %}

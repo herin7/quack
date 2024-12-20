@@ -1,0 +1,63 @@
+
+/* Content container styling */
+.content-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+}
+
+.content-item {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.content-item h3 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+/* Styling for text content */
+.text-content {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+/* Styling for file content */
+.file-content {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.download-link {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.download-link:hover {
+    text-decoration: underline;
+}
+
+.download-link i {
+    margin-right: 8px;  /* Adds space between icon and text */
+    font-size: 1.2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .content-container {
+        padding: 10px;
+    }
+
+    .content-item {
+        padding: 10px;
+    }
+}

@@ -16,8 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from storage.models import User
 
 urlpatterns = [
     path('admin/', admin.site.urls),
    path('', include('storage.urls')),
+   
 ]
