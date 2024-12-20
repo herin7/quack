@@ -88,7 +88,7 @@ python manage.py runserver
 Visit http://127.0.0.1:8000/ to start using Quack.
 
 ## 🚀 Deployment
-The application is successfully deployed and running on render. You can access the live version at [https://quack-production.up.render.app/](https://quack-2.onrender.com/)
+The application is successfully deployed and running on render. You can access the live version at [APP URL](https://quack-2.onrender.com/)
 
 ## ✨ What's Next?
 * Social Media Integration: The ability to share your custom URL with others and integrate with social platforms.
