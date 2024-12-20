@@ -4,6 +4,10 @@ Quack is a feature-rich Django-based web application designed for secure and per
 
 Whether you're a creator managing content, an entrepreneur safeguarding critical data, or just someone looking for a safe personal space on the web, Quack has you covered. Built with security and usability in mind, it ensures your digital space is always just a click away—secure, accessible, and organized.
 
+## 🎥 Demo
+* **Live Demo**: [Home - Quack](https://quack-2.onrender.com/)
+* **Video Demo**: [Watch on YouTube](https://youtu.be/iS8OXg74EUI)
+
 ## 🚀 Key Features
 
 ### 🔒 Customizable User Spaces
@@ -23,7 +27,6 @@ Whether you're a creator managing content, an entrepreneur safeguarding critical
 * Neon PostgreSQL: Utilizing Neon PostgreSQL ensures that your data is stored securely and efficiently, with scalability built into the system from the start.
 
 ### 🎨 Responsive and User-Friendly Interface
-* Modern UI: With a responsive design powered by Tailwind CSS, the app is visually appealing and easy to navigate, ensuring a smooth user experience across devices.
 * Authentication System: Secure user registration, login, and authentication are built-in with Django, offering a reliable framework for managing user access.
 
 ## 🧑‍💻 Tech Stack
@@ -84,6 +87,9 @@ python manage.py runserver
 
 Visit http://127.0.0.1:8000/ to start using Quack.
 
+## 🚀 Deployment
+The application is successfully deployed and running on render. You can access the live version at [https://quack-production.up.render.app/](https://quack-2.onrender.com/)
+
 ## ✨ What's Next?
 * Social Media Integration: The ability to share your custom URL with others and integrate with social platforms.
 * Advanced Content Management: More tools to organize, categorize, and search through stored data.
@@ -92,14 +98,7 @@ Visit http://127.0.0.1:8000/ to start using Quack.
 ## 📝 Contributing
 We welcome contributions! Feel free to open an issue or create a pull request if you have any suggestions, bug fixes, or improvements. Your feedback and ideas help make Quack better!
 
-## ✨ Acknowledgements
-* Django for providing the robust framework powering this app.
-* Cloudinary for making media management a breeze.
-* Neon PostgreSQL for its reliable cloud database solution.
-
 ## 💬 Feedback
 We value your feedback! Let us know what works, what doesn't, and how we can improve your experience with Quack. Reach out if you need any help.
-
----
 
 This app was built with passion and precision, combining powerful backend features with a clean, user-friendly interface. Quack isn't just a tool—it's your personal space to securely store and manage your most valuable content.
