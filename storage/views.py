@@ -71,33 +71,38 @@ def user_space(request, custom_url):
         'form': form
     })
 
+@login_required  
 def public_space(request, custom_url):
-    user_space = get_object_or_404(UserSpace, Q(custom_url=custom_url) & Q(user=request.user))
+
+    if not request.user.is_authenticated:
+        return redirect('login') 
+
+    user_space = get_object_or_404(UserSpace, custom_url=custom_url, user=request.user)
     contents = StoredContent.objects.filter(userspace=user_space)
 
     if request.method == 'POST':
         password = request.POST.get('password')
-        
+
         user = authenticate(username=request.user.username, password=password)
-        
+
         if user is None:
             messages.error(request, "Incorrect password. Please try again.")
             return render(request, 'public_space.html', {
-                'userspace': user_space, 
-                'contents': contents, 
+                'userspace': user_space,
+                'contents': contents,
                 'error': 'Invalid password',
-                'ask_for_password': True  
+                'ask_for_password': True
             })
         
         return render(request, 'public_space.html', {
-            'userspace': user_space, 
+            'userspace': user_space,
             'contents': contents
         })
-    
+
     return render(request, 'public_space.html', {
-        'userspace': user_space, 
+        'userspace': user_space,
         'contents': contents,
-        'ask_for_password': True  
+        'ask_for_password': True
     })
 
 
