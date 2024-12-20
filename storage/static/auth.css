@@ -1,109 +1,187 @@
-
-
 /* Form Container */
 form {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 80%;
-    max-width: 600px;
-    margin: 20px auto;
+    gap: 1.5rem;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 
+        0 4px 6px rgba(0, 0, 0, 0.05),
+        0 10px 15px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 500px;
+    margin: 2rem auto;
+    transition: transform 0.2s ease;
+}
+
+form:hover {
+    transform: translateY(-2px);
+}
+
+/* Input Group */
+.input-group {
+    position: relative;
+    width: 100%;
 }
 
 /* Form Elements */
-form input, form select, form textarea, form button {
+form input,
+form select,
+form textarea {
     width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border-radius: 5px;
-    border: 1px solid var(--accent-light-2);
+    padding: 1rem 1.25rem;
+    border: 2px solid #edf2f7;
+    border-radius: 12px;
     font-size: 1rem;
-    background-color: #f9f9f9;
+    background-color: #ffffff;
+    transition: all 0.2s ease;
+    color: #2d3748;
+    font-family: inherit;
 }
 
+form input:focus,
+form select:focus,
+form textarea:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+    background-color: #ffffff;
+}
+
+/* Labels */
+form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #4a5568;
+    font-size: 0.95rem;
+}
+
+/* Buttons */
 form button {
-    background-color: var(--primary);
-    color: white;
+    padding: 1rem 1.5rem;
     border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    background: linear-gradient(135deg, #4299e1 0%, #667eea 100%);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px rgba(66, 153, 225, 0.2);
 }
 
 form button:hover {
-    background-color: var(--primary-dark);
-    transform: scale(1.05);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(66, 153, 225, 0.3);
 }
 
-/* Error Messages */
+form button:active {
+    transform: translateY(0);
+}
+
+/* Message Containers */
+.messages,
 .error-messages {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-    padding: 15px;
-    border-radius: 5px;
-    margin-bottom: 20px;
-    font-size: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    animation: slideIn 0.3s ease;
 }
 
-.error-messages p {
-    margin: 5px 0;
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-/* Success and Info Messages */
-.messages {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-    padding: 15px;
-    border-radius: 5px;
-    margin-bottom: 20px;
-    font-size: 1rem;
+/* Message Variants */
+.messages .success {
+    background-color: #f0fff4;
+    color: #2f855a;
+    border-left: 4px solid #48bb78;
+    padding: 1rem;
+    border-radius: 8px;
 }
 
-.messages li {
-    margin: 5px 0;
-}
-
-/* Message Styling based on Tags (e.g., error, success, etc.) */
 .messages .error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
+    background-color: #fff5f5;
+    color: #c53030;
+    border-left: 4px solid #f56565;
+    padding: 1rem;
+    border-radius: 8px;
 }
 
 .messages .info {
-    background-color: #d1ecf1;
-    color: #0c5460;
-    border: 1px solid #bee5eb;
+    background-color: #ebf8ff;
+    color: #2b6cb0;
+    border-left: 4px solid #4299e1;
+    padding: 1rem;
+    border-radius: 8px;
 }
 
-.messages .success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+/* Helper Text */
+.input-helper {
+    font-size: 0.85rem;
+    color: #718096;
+    margin-top: 0.5rem;
+}
+
+/* Required Field Indicator */
+.required::after {
+    content: "*";
+    color: #f56565;
+    margin-left: 4px;
+}
+
+/* Disabled State */
+form input:disabled,
+form select:disabled,
+form textarea:disabled {
+    background-color: #f7fafc;
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
     form {
-        width: 90%;
-    }
-
-    form button {
-        font-size: 1.2rem;
+        width: 95%;
+        padding: 1.5rem;
     }
 }
 
 @media (max-width: 480px) {
     form {
         width: 100%;
+        padding: 1.25rem;
+        border-radius: 12px;
+    }
+
+    form input,
+    form select,
+    form textarea {
+        padding: 0.875rem 1rem;
     }
 
     form button {
-        font-size: 1.1rem;
+        padding: 0.875rem 1.25rem;
     }
+}
+
+/* Custom Select Styling */
+select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%234a5568' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
 }

@@ -3,10 +3,8 @@
 
 {% block content %}
 {% block heads %}
-
 <link rel="stylesheet" href="{% static 'home.css' %}">
 <link rel="stylesheet" href="{% static 'profile.css' %}">
-
 {% endblock %}
 
 <div class="profile-container">
@@ -28,7 +26,7 @@
             <p>{{ user_profile.bio|default:"No bio provided" }}</p>
         </div>
 
-        <!-- Number of URLs -->
+        <!-- URLs Section -->
         <div class="profile-urls">
             <h2 class="section-title">Your URLs:</h2>
             <p>You have created {{ num_urls }} custom URL{{ num_urls|pluralize }}.</p>
@@ -41,11 +39,10 @@
             </ul>
         </div>
 
-        <!-- Number of Contents -->
+        <!-- Content Section -->
         <div class="profile-contents">
             <h2 class="section-title">Your Content:</h2>
             <p>You have uploaded {{ num_contents }} piece{{ num_contents|pluralize }} of content.</p>
-   
         </div>
 
         <!-- Password Section -->
@@ -54,13 +51,11 @@
             <a href="{% url 'password_change' %}" class="change-password-btn">Change Password</a>
         </div>
 
-        <!-- Profile Update Form -->
+        <!-- Update Profile Form -->
         <div class="profile-update">
             <h2 class="section-title">Update Your Profile:</h2>
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-                
-                <!-- Photo field -->
                 <div class="form-group">
                     <label for="id_photo">Photo:</label>
                     {% if user_profile.photo %}
@@ -72,8 +67,7 @@
                     {% endif %}
                     {{ profile_form.photo }}
                 </div>
-                
-                <!-- Bio field -->
+
                 <div class="form-group">
                     <label for="id_bio">Bio:</label>
                     {{ profile_form.bio }}
