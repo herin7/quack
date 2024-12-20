@@ -4,11 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login ,authenticate
 from django.contrib import messages
 from django.db.models import Q
-from .models import UserSpace, StoredContent
-from .forms import CustomURLForm, StoredContentForm
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from .forms import CustomURLForm, StoredContentForm,UserProfileUpdateForm
 from .models import UserSpace, StoredContent, UserProfile
+
 
 @login_required
 def home(request):
@@ -16,7 +14,6 @@ def home(request):
     if request.method == 'POST':
         form = CustomURLForm(request.POST)
         if form.is_valid():
-            # Check if custom URL already exists for the current user
             custom_url = form.cleaned_data['custom_url']
 
             if UserSpace.objects.filter(user=request.user, custom_url=custom_url).exists():
@@ -25,8 +22,6 @@ def home(request):
                     'form': form,
                     'user_spaces': user_spaces
                 })
-
-            # If URL exists for other users, allow current user to create it
             user_space = form.save(commit=False)
             user_space.user = request.user
             user_space.save()
@@ -76,7 +71,6 @@ def user_space(request, custom_url):
         'form': form
     })
 
-
 def public_space(request, custom_url):
     user_space = get_object_or_404(UserSpace, Q(custom_url=custom_url) & Q(user=request.user))
     contents = StoredContent.objects.filter(userspace=user_space)
@@ -120,37 +114,28 @@ def login_view(request):
             messages.error(request, 'Invalid username or password')
     return render(request, 'registration/login.html')
     
-from django.shortcuts import render, redirect
-from django.contrib.auth import login
-from django.contrib import messages
-from .forms import UserProfileCreationForm
-from django.contrib.auth.models import User
-from .models import UserProfile  
 
 def authview(request): 
     if request.method == "POST":
         form = UserCreationForm(request.POST, request.FILES)
         if form.is_valid(): 
-            user = form.save()  # Create the user
+            user = form.save()  
             
             if not UserProfile.objects.filter(user=user).exists():
                 UserProfile.objects.create(user=user)
 
-            login(request, user)  # Log the user in after successful registration
+            login(request, user)  
             messages.success(request, "Registration successful!")
-            return redirect("/")  # Redirect to the home page or desired location
+            return redirect("/") 
         else:
             messages.error(request, "Please correct the errors below.")
             return render(request, "registration/signup.html", {"form": form})
     else: 
-        form = UserCreationForm()  # Display empty form
+        form = UserCreationForm() 
     return render(request, "registration/signup.html", {"form": form})
 
 
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from .forms import UserProfileUpdateForm
-from django.http import Http404
+
 
 @login_required
 def user_profile(request):
@@ -162,16 +147,14 @@ def user_profile(request):
     user_spaces = UserSpace.objects.filter(user=request.user)
     stored_contents = StoredContent.objects.filter(userspace__user=request.user)
 
-    # Prepare the number of URLs and stored contents
     num_urls = user_spaces.count()
     num_contents = stored_contents.count()
 
-    # Handle Profile Update Form
     if request.method == 'POST':
         profile_form = UserProfileUpdateForm(request.POST, request.FILES, instance=user_profile)
         if profile_form.is_valid():
             profile_form.save()
-            return redirect('user_profile')  # Redirect to the same page after successful update
+            return redirect('user_profile') 
     else:
         profile_form = UserProfileUpdateForm(instance=user_profile)
 
@@ -181,5 +164,5 @@ def user_profile(request):
         'stored_contents': stored_contents,
         'num_urls': num_urls,
         'num_contents': num_contents,
-        'profile_form': profile_form,  # Add the form to context
+        'profile_form': profile_form,
     })
