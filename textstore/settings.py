@@ -54,7 +54,7 @@ STATICFILES_DIRS = [
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-j$u01nqg3n5@_wj-q42xq8r9g2z4%wbu3t4cprq#0_9=hltn%j'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -75,7 +75,7 @@ INSTALLED_APPS = [
     'storage'
 ]
 CSRF_TRUSTED_ORIGINS = [
-    'https://quack-2.onrender.com',  # Add your app's domain here
+    'https://quack-2.onrender.com', 
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -128,7 +128,7 @@ LOGOUT_REDIRECT_URL = '/'
 #         'ENGINE': 'django.db.backends.sqlite3',
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
-# }
+# } 
 
 
 # Password validation

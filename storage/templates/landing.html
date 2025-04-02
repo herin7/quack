@@ -1,0 +1,414 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Quacker - Private Content Sharing{% endblock %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    /* Base Styles */
+    body {
+        overflow: hidden;
+        height: 100vh;
+        margin: 0;
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 1000;
+        background: rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .navbar-brand {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: white;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        letter-spacing: -0.5px;
+    }
+
+    .navbar-links {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .github-link {
+        color: var(--text-secondary);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .github-link:hover {
+        color: white;
+        transform: translateY(-1px);
+    }
+
+    .coffee-text {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 500;
+    }
+
+    .coffee-icon {
+        color: #ff9500;
+    }
+
+    /* Main Content */
+    .main-content {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 0 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Gradient Background */
+    .gradient-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 50% 50%, rgba(0, 102, 255, 0.15), transparent 70%);
+        z-index: -1;
+    }
+
+    /* Content Styles */
+    .content-wrapper {
+        text-align: center;
+        max-width: 800px;
+        position: relative;
+        z-index: 1;
+        padding: 0 1rem;
+    }
+
+    .main-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: clamp(2rem, 8vw, 4rem);
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -1px;
+    }
+
+    .subtitle {
+        font-family: 'Inter', sans-serif;
+        font-size: clamp(1rem, 3vw, 1.25rem);
+        color: var(--text-secondary);
+        margin-bottom: 3rem;
+        line-height: 1.6;
+        font-weight: 400;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0 1rem;
+    }
+
+    /* CTA Buttons */
+    .cta-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .btn-cta {
+        padding: 0.8rem 2rem;
+        font-size: 1rem;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        font-weight: 600;
+        font-family: 'Inter', sans-serif;
+        letter-spacing: -0.3px;
+        min-width: 160px;
+        text-align: center;
+        flex: 1;
+    }
+
+    .btn-cta.primary {
+        background: var(--primary-gradient);
+        color: white;
+        box-shadow: 0 0 20px rgba(0, 153, 255, 0.3);
+    }
+
+    .btn-cta.primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 30px rgba(0, 153, 255, 0.5);
+    }
+
+    .btn-cta.secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+        backdrop-filter: blur(10px);
+    }
+
+    .btn-cta.secondary:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-2px);
+    }
+
+    /* Floating Tags */
+    .floating-tags {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .tag {
+        position: absolute;
+        padding: 0.5rem 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50px;
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        animation: float 15s infinite linear;
+        font-family: 'Inter', sans-serif;
+        font-weight: 500;
+        letter-spacing: -0.3px;
+    }
+
+    .tag:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+    .tag:nth-child(2) { top: 30%; right: 15%; animation-delay: -2s; }
+    .tag:nth-child(3) { bottom: 25%; left: 20%; animation-delay: -4s; }
+    .tag:nth-child(4) { bottom: 35%; right: 25%; animation-delay: -6s; }
+    .tag:nth-child(5) { top: 40%; left: 30%; animation-delay: -8s; }
+    .tag:nth-child(6) { top: 50%; right: 35%; animation-delay: -10s; }
+
+    @keyframes float {
+        0% { transform: translate(0, 0) rotate(0deg); }
+        25% { transform: translate(20px, -20px) rotate(5deg); }
+        50% { transform: translate(0, -40px) rotate(0deg); }
+        75% { transform: translate(-20px, -20px) rotate(-5deg); }
+        100% { transform: translate(0, 0) rotate(0deg); }
+    }
+
+    /* Footer */
+    .footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 1rem;
+        text-align: center;
+        z-index: 1000;
+        background: rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .footer-text {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-weight: 500;
+    }
+
+    .footer .coffee-icon {
+        color: #ff9500;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .navbar {
+            padding: 1rem;
+        }
+
+        .navbar-links {
+            gap: 0.5rem;
+        }
+
+        .github-link span {
+            display: none;
+        }
+
+        .main-content {
+            padding: 0 1rem;
+        }
+
+        .content-wrapper {
+            padding: 0;
+        }
+
+        .main-title {
+            font-size: clamp(1.8rem, 6vw, 2.5rem);
+            padding: 0 1rem;
+        }
+
+        .subtitle {
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            padding: 0 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .cta-buttons {
+            flex-direction: column;
+            width: 100%;
+            max-width: 250px;
+            margin: 0 auto;
+            gap: 0.8rem;
+        }
+
+        .btn-cta {
+            width: 100%;
+            min-width: unset;
+            padding: 0.9rem 1rem;
+        }
+
+        .tag {
+            font-size: 0.7rem;
+            padding: 0.4rem 0.8rem;
+        }
+
+        /* Adjust tag positions for mobile */
+        .tag:nth-child(1) { top: 15%; left: 5%; }
+        .tag:nth-child(2) { top: 25%; right: 5%; }
+        .tag:nth-child(3) { bottom: 20%; left: 10%; }
+        .tag:nth-child(4) { bottom: 30%; right: 10%; }
+        .tag:nth-child(5) { top: 35%; left: 15%; }
+        .tag:nth-child(6) { top: 45%; right: 15%; }
+
+        .footer {
+            padding: 0.8rem;
+        }
+
+        .footer-text {
+            font-size: 0.8rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .navbar-brand {
+            font-size: 1.2rem;
+        }
+
+        .main-title {
+            font-size: clamp(1.5rem, 6vw, 2rem);
+        }
+
+        .subtitle {
+            font-size: clamp(0.8rem, 3vw, 1rem);
+        }
+
+        .cta-buttons {
+            max-width: 250px;
+            gap: 0.7rem;
+        }
+        .btn-cta {
+            padding: 0.8rem 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .footer {
+            padding: 0.6rem;
+        }
+
+        .footer-text {
+            font-size: 0.75rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<nav class="navbar">
+    <a href="/" class="navbar-brand">Quacker</a>
+    <div class="navbar-links">
+        <a href="https://github.com/herin" target="_blank" class="github-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+            </svg>
+            <span>GitHub</span>
+        </a>
+    </div>
+</nav>
+
+<div class="main-content">
+    <div class="gradient-bg"></div>
+    
+    <div class="floating-tags">
+        <div class="tag">#secure</div>
+        <div class="tag">#private</div>
+        <div class="tag">#encrypted</div>
+        <div class="tag">#password-protected</div>
+        <div class="tag">#easy-access</div>
+        <div class="tag">#web-based</div>
+    </div>
+
+    <div class="content-wrapper">
+        <h1 class="main-title">Keep Your Content Private on Web</h1>
+        <p class="subtitle">Access it anytime through your personal password-protected URL. Share securely with anyone, anywhere.</p>
+        
+        <div class="cta-buttons">
+            <a href="{% url 'authView' %}" class="btn-cta primary">Get Started</a>
+            <a href="{% url 'login' %}" class="btn-cta secondary">Sign In</a>
+        </div>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="footer-text">
+        <span>Built by with  <svg class="coffee-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+            <line x1="6" y1="1" x2="6" y2="4"></line>
+            <line x1="10" y1="1" x2="10" y2="4"></line>
+            <line x1="14" y1="1" x2="14" y2="4"></line>
+        </svg>  by Herin</span>
+       
+    </div>
+</footer>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add random rotation to tags
+    document.querySelectorAll('.tag').forEach(tag => {
+        const randomRotation = Math.random() * 10 - 5;
+        tag.style.transform = `rotate(${randomRotation}deg)`;
+    });
+</script>
+{% endblock %} 

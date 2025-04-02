@@ -1,46 +1,163 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block heads %}
-    <link rel="stylesheet" href="{% static 'home.css' %}">
-    <link rel="stylesheet" href="{% static 'public.css' %}">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+{% block title %}{{ userspace.custom_url }} - Public Space{% endblock %}
+
+{% block extra_css %}
+<style>
+    .public-space-header {
+        text-align: center;
+        margin-bottom: var(--spacing-xl);
+    }
+
+    .space-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-md);
+    }
+
+    .space-description {
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .password-form {
+        background-color: var(--surface-color);
+        border-radius: var(--border-radius-lg);
+        padding: var(--spacing-xl);
+        box-shadow: var(--shadow-md);
+        max-width: 400px;
+        margin: 0 auto var(--spacing-xl);
+    }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: var(--spacing-lg);
+    }
+
+    .content-card {
+        background-color: var(--surface-color);
+        border-radius: var(--border-radius-lg);
+        padding: var(--spacing-lg);
+        box-shadow: var(--shadow-md);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .content-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .content-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--spacing-md);
+    }
+
+    .content-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .content-type {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        text-transform: capitalize;
+    }
+
+    .content-body {
+        margin-bottom: var(--spacing-md);
+    }
+
+    .content-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+
+    .file-preview {
+        max-width: 100%;
+        height: auto;
+        border-radius: var(--border-radius-md);
+        margin-top: var(--spacing-md);
+    }
+
+    .error-message {
+        color: var(--error-color);
+        margin-top: var(--spacing-sm);
+        font-size: 0.875rem;
+    }
+
+    @media (max-width: 768px) {
+        .public-space-header {
+            padding: 0 var(--spacing-md);
+        }
+        
+        .password-form {
+            margin: 0 var(--spacing-md) var(--spacing-xl);
+        }
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-    {% if ask_for_password %}
-        <h2>Please enter your password to view this space:</h2>
-        <form method="post">
-            {% csrf_token %}
-            <input type="password" name="password" placeholder="Enter your password" required>
-            <button type="submit">Submit</button>
-        </form> 
-        {% if error %}
-            <p style="color:red; text-align:center;">{{ error }}</p>
-        {% endif %}
-    {% else %}
-        <h1>{{ userspace.custom_url }} - Your own space</h1>
-        <p>{{ userspace.description }}</p>
-        
-        <h2>Contents:</h2>
-        <div class="content-container">
-            {% for content in contents %}
-                <div class="content-item">
-                    <h3>{{ content.title }}</h3>
-                    
-                    {% if content.content_type == 'text' %}
-                        <div class="text-content">
-                            <p>{{ content.text_content }}</p>
-                        </div>
-                    {% else %}
-                        <div class="file-content">
-                            <a href="{{ content.file_content.url }}" class="download-link">
-                                <i class="fas fa-download"></i> Download File
-                            </a>
-                        </div>
-                    {% endif %}
-                </div>
-            {% endfor %}
+<div class="public-space-header">
+    <h1 class="space-title">{{ userspace.custom_url }}</h1>
+    <p class="space-description">This is a public space containing shared content.</p>
+</div>
+
+{% if ask_for_password %}
+<div class="password-form">
+    <h2 class="form-title">Enter Password</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" name="password" id="password" class="form-input" required 
+                   placeholder="Enter the space password">
+            {% if error %}
+                <div class="error-message">{{ error }}</div>
+            {% endif %}
         </div>
-    {% endif %}
+        <button type="submit" class="btn btn-primary w-100">Access Content</button>
+    </form>
+</div>
+{% else %}
+<div class="content-grid">
+    {% for content in contents %}
+    <div class="content-card">
+        <div class="content-header">
+            <h3 class="content-title">{{ content.title }}</h3>
+            <span class="content-type">{{ content.content_type }}</span>
+        </div>
+        
+        <div class="content-body">
+            {% if content.content_type == 'text' %}
+                <p>{{ content.text_content }}</p>
+            {% else %}
+                {% if content.file_content %}
+                    <img src="{{ content.file_content.url }}" alt="{{ content.title }}" class="file-preview">
+                {% endif %}
+            {% endif %}
+        </div>
+        
+        <div class="content-footer">
+            <span>Added on: {{ content.created_at|date:"F j, Y" }}</span>
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-state">
+        <h3>No content available</h3>
+        <p>This space doesn't contain any content yet.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
 {% endblock %}

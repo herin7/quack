@@ -5,60 +5,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}My Website{% endblock %}</title>
+    <title>{% block title %}Quacker - Your Content Space{% endblock %}</title>
     
-    {% block heads %}
-       <link rel="stylesheet" href="{% static 'home.css' %}">
-    {% endblock %}
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Global Styles -->
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    {% block extra_css %}{% endblock %}
+
+    <style>
+        /* Hide sidebar on landing page */
+        body.is-landing .sidebar,
+        body.is-landing .mobile-nav-toggle {
+            display: none;
+        }
+
+        body.is-landing .main-content {
+            margin-left: 0;
+            padding: 0;
+        }
+
+        body.is-landing .content-wrapper {
+            max-width: none;
+            padding: 0;
+        }
+    </style>
 </head>
-<body>
-    <main class="app">
-        <header class="appbar appbar--hero">
-            <div class="appbar__title">
-                <h1 class="appbar__title-text">
-                    {% block header_title %} quacker {% endblock %}
-                </h1>
+<body class="{% if request.resolver_match.url_name == 'landing' %}is-landing{% endif %}">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <div class="app-container">
+        {% if not request.resolver_match.url_name == 'landing' %}
+        <!-- Mobile Navigation Toggle -->
+        <button class="mobile-nav-toggle" id="mobileNavToggle">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+
+        <!-- Navigation Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="{% url 'home' %}" class="logo-link">
+                    <h1 class="logo">Quacker</h1>
+                </a>
             </div>
-            <div class="appbar__controls-right">
+            
+            {% if user.is_authenticated %}
+            <div class="sidebar-nav">
+                <a href="{% url 'home' %}" class="nav-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                    <svg class="nav-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                        <path d="M9 22V12h6v10"></path>
+                    </svg>
+                    <span>Home</span>
+                </a>
+                
+                <a href="{% url 'user_profile' %}" class="nav-item {% if request.resolver_match.url_name == 'user_profile' %}active{% endif %}">
+                    <svg class="nav-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>Profile</span>
+                </a>
+            </div>
+            {% endif %}
+            
+            <div class="sidebar-footer">
                 {% if user.is_authenticated %}
-                <form method="POST" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button class="button" type="submit">
-                        Logout
-                    </button>
-                </form>
+                <div class="user-info fade-in">
+                    <span class="username">{{ user.username }}</span>
+                    <form method="POST" action="{% url 'logout' %}" class="logout-form" id="logoutForm">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-logout">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"></path>
+                                <path d="M16 17l5-5-5-5"></path>
+                                <path d="M21 12H9"></path>
+                            </svg>
+                            <span>Logout</span>
+                        </button>
+                    </form>
+                </div>
                 {% else %}
-                <button class="button" onclick="window.location.href='{% url 'login' %}'">Login</button>
-                <button class="button" onclick="window.location.href='{% url 'authView' %}'">Sign Up</button>
+                <div class="auth-buttons fade-in">
+                    <a href="{% url 'login' %}" class="btn btn-primary w-100 mb-2">Login</a>
+                    <a href="{% url 'authView' %}" class="btn btn-secondary w-100">Sign Up</a>
+                </div>
                 {% endif %}
             </div>
-        </header>
-        
-        <section class="content backdrop scrollview">
-            {% block content %}
-            <!-- Content from the child template will be loaded here -->
-            {% endblock %}
-        </section>
-
-        <nav class="navigation">
-            <a href="{% url 'home' %}" class="navigation__item {% if request.resolver_match.url_name == 'home' %}navigation--item-current{% endif %}">
-                <svg class="navigation__item-icon" width="21" height="19" viewBox="0 0 21 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M20.5 9.28516C20.5 9.10938 20.4297 8.96875 20.2891 8.82812L10.7266 0.390625C10.6211 0.320312 10.4805 0.285156 10.375 0.285156C10.2344 0.285156 10.0938 0.320312 9.98828 0.390625L0.425781 8.82812C0.285156 8.96875 0.25 9.10938 0.25 9.28516C0.25 9.56641 0.496094 9.8125 0.8125 9.8125C0.917969 9.8125 1.05859 9.77734 1.16406 9.67188L2.5 8.51172V16.5625C2.5 17.5117 3.23828 18.25 4.1875 18.25H7C7.91406 18.25 8.6875 17.5117 8.6875 16.5625V12.625H12.0625V16.5625C12.0625 17.5117 12.8008 18.25 13.75 18.25H16.5625C17.4766 18.25 18.25 17.5117 18.25 16.5625V8.51172L19.5508 9.67188C19.6562 9.77734 19.7969 9.8125 19.9375 9.8125C20.2188 9.8125 20.5 9.56641 20.5 9.28516Z" fill="white"/>
-                </svg>
-                <p class="navigation__item-label">Home</p>
-            </a>
-            <a href='{% url "user_profile" %}' class="navigation__item {% if request.resolver_match.url_name == 'user_profile' %}navigation--item-current{% endif %}">
-
-                <!-- Updated Profile Icon -->
-                <svg class="navigation__item-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="12" cy="8" r="4" stroke="#000" stroke-width="1.5" fill="#fff"/>
-                    <path d="M4 20C4 16.6863 7.58172 14 12 14C16.4183 14 20 16.6863 20 20" stroke="#000" stroke-width="1.5" fill="none"/>
-                </svg>
-            
-                <p class="navigation__item-label">Profile</p>
-            </a>
-            
         </nav>
-    </main>
+        {% endif %}
+
+        <!-- Main Content -->
+        <main class="main-content fade-in">
+            <div class="content-wrapper">
+                {% block content %}
+                <!-- Content from the child template will be loaded here -->
+                {% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Mobile Navigation Toggle
+        const mobileNavToggle = document.getElementById('mobileNavToggle');
+        const sidebar = document.getElementById('sidebar');
+        
+        if (mobileNavToggle && sidebar) {
+            mobileNavToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+            });
+
+            // Close sidebar when clicking outside
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768 && 
+                    !sidebar.contains(e.target) && 
+                    !mobileNavToggle.contains(e.target) && 
+                    sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                }
+            });
+        }
+
+        // Loading State Management
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const logoutForm = document.getElementById('logoutForm');
+
+        if (logoutForm) {
+            logoutForm.addEventListener('submit', () => {
+                loadingOverlay.style.display = 'flex';
+            });
+        }
+
+        // Show loading overlay on navigation
+        document.addEventListener('click', (e) => {
+            const link = e.target.closest('a');
+            if (link && !link.hasAttribute('download') && link.href.startsWith(window.location.origin)) {
+                loadingOverlay.style.display = 'flex';
+            }
+        });
+
+        // Form submission loading state
+        document.addEventListener('submit', (e) => {
+            const form = e.target;
+            if (!form.classList.contains('no-loading')) {
+                loadingOverlay.style.display = 'flex';
+            }
+        });
+
+        // Hide loading overlay on page load
+        window.addEventListener('load', () => {
+            loadingOverlay.style.display = 'none';
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

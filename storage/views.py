@@ -7,6 +7,11 @@ from django.db.models import Q
 from .forms import CustomURLForm, StoredContentForm,UserProfileUpdateForm
 from .models import UserSpace, StoredContent, UserProfile
 
+from django.shortcuts import render, redirect
+
+def landing_page(request):
+    return render(request, 'landing.html') 
+
 
 @login_required
 def home(request):
