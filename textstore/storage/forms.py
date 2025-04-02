@@ -49,7 +49,7 @@ class UserProfileCreationForm(UserCreationForm):
 class UserProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['photo', 'bio']  
+        fields = ['photo', 'bio']  # Fields to update (you can add more as needed)
         widgets = {
-            'bio': forms.Textarea(attrs={'rows': 4, 'cols': 40}), 
+            'bio': forms.Textarea(attrs={'rows': 4, 'cols': 40}),  # Optional: for better UI
         }

@@ -1,37 +1,155 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block heads %}
 
-<link rel="stylesheet" href="{% static 'home.css' %}">
-<link rel="stylesheet" href="{% static 'auth.css' %}">
+{% block title %}Sign Up - Quacker{% endblock %}
 
+{% block extra_css %}
+<style>
+    .auth-container {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: var(--spacing-xl);
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: var(--spacing-xl);
+    }
+
+    .auth-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .auth-subtitle {
+        color: var(--text-secondary);
+    }
+
+    .auth-form {
+        background-color: var(--surface-color);
+        border-radius: var(--border-radius-lg);
+        padding: var(--spacing-xl);
+        box-shadow: var(--shadow-md);
+    }
+
+    .form-group {
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: var(--spacing-xs);
+        font-weight: 500;
+        color: var(--text-primary);
+    }
+
+    .form-input {
+        width: 100%;
+        padding: var(--spacing-md);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius-md);
+        font-size: 1rem;
+        transition: all 0.2s ease;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .error-message {
+        color: var(--error-color);
+        margin-top: var(--spacing-xs);
+        font-size: 0.875rem;
+    }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: var(--spacing-lg);
+        color: var(--text-secondary);
+    }
+
+    .auth-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .auth-link:hover {
+        text-decoration: underline;
+    }
+
+    .alert {
+        padding: var(--spacing-md);
+        border-radius: var(--border-radius-md);
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .alert-error {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: var(--error-color);
+        border: 1px solid var(--error-color);
+    }
+
+    .alert-success {
+        background-color: rgba(34, 197, 94, 0.1);
+        color: var(--success-color);
+        border: 1px solid var(--success-color);
+    }
+</style>
 {% endblock %}
+
 {% block content %}
-<form method="POST">
-    {% csrf_token %}
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+<div class="auth-container">
+    <div class="auth-header">
+        <h1 class="auth-title">Create Account</h1>
+        <p class="auth-subtitle">Join Quacker to start sharing content</p>
+    </div>
 
-    {% if form.errors %}
-        <div class="error-messages">
-            {% for field in form %}
-                {% for error in field.errors %}
-                    <p>{{ error }}</p>
+    <div class="auth-form">
+        <form method="POST">
+            {% csrf_token %}
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
                 {% endfor %}
+            {% endif %}
+
+            {% if form.errors %}
+                <div class="alert alert-error">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small class="help-text">{{ field.help_text }}</small>
+                    {% endif %}
+                </div>
             {% endfor %}
-            {% for error in form.non_field_errors %}
-                <p>{{ error }}</p>
-            {% endfor %}
+
+            <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Already have an account? <a href="{% url 'login' %}" class="auth-link">Login</a></p>
         </div>
-    {% endif %}
-
-    {{ form.as_p }}
-    <button type="submit">Sign Up</button>
-</form>
-
+    </div>
+</div>
 {% endblock %}

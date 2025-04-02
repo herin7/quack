@@ -1,55 +1,170 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Home - Quack{% endblock %}
-  
-    {% block heads %}
-    <link rel="stylesheet" href="{% static 'home.css' %}">
-    {% endblock %}
+{% block title %}Home - Quacker{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--spacing-xl);
+    }
+
+    .spaces-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: var(--spacing-lg);
+        margin-bottom: var(--spacing-xl);
+    }
+
+    .space-card {
+        background-color: var(--surface-color);
+        border-radius: var(--border-radius-lg);
+        padding: var(--spacing-lg);
+        box-shadow: var(--shadow-md);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .space-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .space-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--spacing-md);
+    }
+
+    .space-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .space-actions {
+        display: flex;
+        gap: var(--spacing-sm);
+    }
+
+    .space-content {
+        color: var(--text-secondary);
+        margin-bottom: var(--spacing-md);
+    }
+
+    .space-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+
+    .create-space-form {
+        background-color: var(--surface-color);
+        border-radius: var(--border-radius-lg);
+        padding: var(--spacing-xl);
+        box-shadow: var(--shadow-md);
+        margin-bottom: var(--spacing-xl);
+    }
+
+    .form-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: var(--spacing-lg);
+        color: var(--text-primary);
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: var(--spacing-md);
+    }
+
+    @media (max-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .dashboard-header {
+            flex-direction: column;
+            gap: var(--spacing-md);
+            align-items: flex-start;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-    {% if user.is_authenticated %}
-        <div class="welcome-section">
-            <h1>Welcome, {{ user.username }}!</h1>
-         
-        </div>
+<div class="dashboard-header">
+    <h1 class="page-title">Your Spaces</h1>
+    <button class="btn btn-primary" onclick="document.getElementById('createSpaceForm').classList.toggle('hidden')">
+        Create New Space
+    </button>
+</div>
 
-        <div class="url-creation-section">
-            <h2>Create Your Custom URL</h2>
-            <form method="post" class="url-creation-form">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="create-url-button">Create URL</button>
-            </form>
+<div id="createSpaceForm" class="create-space-form {% if not form.errors %}hidden{% endif %}">
+    <h2 class="form-title">Create New Space</h2>
+    <form method="POST" class="form-grid">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_custom_url" class="form-label">Custom URL</label>
+            <input type="text" name="custom_url" id="id_custom_url" class="form-input" required 
+                   placeholder="Enter your custom URL" value="{{ form.custom_url.value|default:'' }}">
+            {% if form.custom_url.errors %}
+                <div class="error-message">{{ form.custom_url.errors.0 }}</div>
+            {% endif %}
         </div>
+        <button type="submit" class="btn btn-primary align-self-end">Create Space</button>
+    </form>
+</div>
 
-        {% if user_spaces %}
-        <div class="existing-urls-section">
-            <h2>Your Existing URLs:</h2>
-            <ul class="url-list">
-                {% for space in user_spaces %}
-                    <li class="url-item">
-                        <div class="url-details">
-                            <a href="{% url 'user_space' space.custom_url %}" class="url-link" aria-label="Visit your space: {{ space.custom_url }}">
-                                <span class="url-text">{{ space.custom_url }}</span>
-                            </a>
-                            <a href="{% url 'public_space' space.custom_url %}" class="view-public-link" aria-label="View public space: {{ space.custom_url }}">Access</a>
-                        </div>
-                        <div class="url-actions">
-                            <form method="POST" action="{% url 'delete_space' space.custom_url %}" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this URL?');">
-                                {% csrf_token %}
-                                <button type="submit" class="delete-button" aria-label="Delete space: {{ space.custom_url }}">Remove</button>
-                            </form>
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="spaces-grid">
+    {% for space in user_spaces %}
+    <div class="space-card">
+        <div class="space-header">
+            <h3 class="space-title">{{ space.custom_url }}</h3>
+            <div class="space-actions">
+                <a href="{% url 'user_space' custom_url=space.custom_url %}" class="btn btn-secondary">
+                    View
+                </a>
+                <form method="POST" action="{% url 'delete_space' custom_url=space.custom_url %}" 
+                      onsubmit="return confirm('Are you sure you want to delete this space?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        Delete
+                    </button>
+                </form>
+            </div>
         </div>
-    {% endif %}
-    
-    {% else %}
-        <div class="auth-links">
-            <a href="{% url 'login' %}" class="auth-link">Login</a>
-            <a href="{% url 'authView' %}" class="auth-link">Sign Up</a>
+        <div class="space-content">
+            <p>Created on: {{ space.created_at|date:"F j, Y" }}</p>
         </div>
-    {% endif %}
+        <div class="space-footer">
+            <span>Contents: {{ space.storedcontent_set.count }}</span>
+            <a href="{% url 'public_space' custom_url=space.custom_url %}" class="btn-link">
+                Public Link
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-state">
+        <h3>No spaces yet</h3>
+        <p>Create your first space to start sharing content!</p>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

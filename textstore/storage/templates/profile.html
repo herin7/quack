@@ -1,87 +1,236 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block content %}
-{% block heads %}
+{% block title %}Profile - {{ user.username }}{% endblock %}
 
-<link rel="stylesheet" href="{% static 'home.css' %}">
-<link rel="stylesheet" href="{% static 'profile.css' %}">
+{% block extra_css %}
+<style>
+    .profile-header {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xl);
+        margin-bottom: var(--spacing-xl);
+    }
 
+    .profile-avatar {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid var(--surface-color);
+        box-shadow: var(--shadow-md);
+    }
+
+    .profile-info {
+        flex: 1;
+    }
+
+    .profile-name {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .profile-stats {
+        display: flex;
+        gap: var(--spacing-xl);
+        margin-top: var(--spacing-md);
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+
+    .profile-form {
+        background-color: var(--surface-color);
+        border-radius: var(--border-radius-lg);
+        padding: var(--spacing-xl);
+        box-shadow: var(--shadow-md);
+        margin-bottom: var(--spacing-xl);
+    }
+
+    .form-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: var(--spacing-lg);
+        color: var(--text-primary);
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-lg);
+    }
+
+    .bio-group {
+        grid-column: 1 / -1;
+    }
+
+    .spaces-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: var(--spacing-lg);
+    }
+
+    .space-card {
+        background-color: var(--surface-color);
+        border-radius: var(--border-radius-lg);
+        padding: var(--spacing-lg);
+        box-shadow: var(--shadow-md);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .space-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .space-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--spacing-md);
+    }
+
+    .space-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .space-content {
+        color: var(--text-secondary);
+        margin-bottom: var(--spacing-md);
+    }
+
+    .space-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+
+    @media (max-width: 768px) {
+        .profile-header {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .profile-stats {
+            justify-content: center;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
 {% endblock %}
 
-<div class="profile-container">
-    <h1 class="profile-header">{{ user.username }}'s Profile</h1>
-
-    <div class="profile-content">
-        <!-- Profile Photo -->
-        <div class="profile-photo">
-            {% if user_profile.photo %}
-                <img src="{{ user_profile.photo.url }}" alt="{{ user.username }}'s Profile Picture" class="profile-img">
-            {% else %}
-                <img src="/static/default-profile-pic.jpg" alt="Default Profile Picture" class="profile-img">
-            {% endif %}
+{% block content %}
+<div class="profile-header">
+    {% if user_profile.photo %}
+        <img src="{{ user_profile.photo.url }}" alt="{{ user.username }}" class="profile-avatar">
+    {% else %}
+        <div class="profile-avatar" style="background-color: var(--primary-color); display: flex; align-items: center; justify-content: center;">
+            <span style="color: white; font-size: 3rem;">{{ user.username|first|upper }}</span>
         </div>
-
-        <!-- Bio Section -->
-        <div class="profile-bio">
-            <h2 class="section-title">Bio:</h2>
-            <p>{{ user_profile.bio|default:"No bio provided" }}</p>
-        </div>
-
-        <!-- Number of URLs -->
-        <div class="profile-urls">
-            <h2 class="section-title">Your URLs:</h2>
-            <p>You have created {{ num_urls }} custom URL{{ num_urls|pluralize }}.</p>
-            <ul class="url-list">
-                {% for space in user_spaces %}
-                    <li>
-                        <a href="{% url 'user_space' space.custom_url %}" class="url-item">{{ space.custom_url }}</a>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-
-        <!-- Number of Contents -->
-        <div class="profile-contents">
-            <h2 class="section-title">Your Content:</h2>
-            <p>You have uploaded {{ num_contents }} piece{{ num_contents|pluralize }} of content.</p>
-   
-        </div>
-
-        <!-- Password Section -->
-        <div class="profile-password">
-            <h2 class="section-title">Change Your Password:</h2>
-            <a href="{% url 'password_change' %}" class="change-password-btn">Change Password</a>
-        </div>
-
-        <!-- Profile Update Form -->
-        <div class="profile-update">
-            <h2 class="section-title">Update Your Profile:</h2>
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                
-                <!-- Photo field -->
-                <div class="form-group">
-                    <label for="id_photo">Photo:</label>
-                    {% if user_profile.photo %}
-                        <p>Currently: <a href="{{ user_profile.photo.url }}" target="_blank">View Photo</a></p>
-                        <label for="id_photo">Clear:</label>
-                        <input type="checkbox" name="clear_photo" id="clear_photo"> Clear photo
-                    {% else %}
-                        <p>No photo uploaded.</p>
-                    {% endif %}
-                    {{ profile_form.photo }}
-                </div>
-                
-                <!-- Bio field -->
-                <div class="form-group">
-                    <label for="id_bio">Bio:</label>
-                    {{ profile_form.bio }}
-                </div>
-
-                <button type="submit" class="submit-btn">Update Profile</button>
-            </form>
+    {% endif %}
+    
+    <div class="profile-info">
+        <h1 class="profile-name">{{ user.username }}</h1>
+        <p class="profile-bio">{{ user_profile.bio }}</p>
+        
+        <div class="profile-stats">
+            <div class="stat-item">
+                <div class="stat-value">{{ num_urls }}</div>
+                <div class="stat-label">Spaces</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ num_contents }}</div>
+                <div class="stat-label">Contents</div>
+            </div>
         </div>
     </div>
 </div>
+
+<div class="profile-form">
+    <h2 class="form-title">Edit Profile</h2>
+    <form method="POST" enctype="multipart/form-data" class="form-grid">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_photo" class="form-label">Profile Photo</label>
+            <input type="file" name="photo" id="id_photo" class="form-input">
+            {% if profile_form.photo.errors %}
+                <div class="error-message">{{ profile_form.photo.errors.0 }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group bio-group">
+            <label for="id_bio" class="form-label">Bio</label>
+            <textarea name="bio" id="id_bio" class="form-input" rows="4" 
+                      placeholder="Tell us about yourself">{{ profile_form.bio.value|default:'' }}</textarea>
+            {% if profile_form.bio.errors %}
+                <div class="error-message">{{ profile_form.bio.errors.0 }}</div>
+            {% endif %}
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+</div>
+
+<h2 class="section-title">Your Spaces</h2>
+<div class="spaces-grid">
+    {% for space in user_spaces %}
+    <div class="space-card">
+        <div class="space-header">
+            <h3 class="space-title">{{ space.custom_url }}</h3>
+        </div>
+        <div class="space-content">
+            <p>Created on: {{ space.created_at|date:"F j, Y" }}</p>
+        </div>
+        <div class="space-footer">
+            <span>Contents: {{ space.storedcontent_set.count }}</span>
+            <a href="{% url 'user_space' custom_url=space.custom_url %}" class="btn-link">View Space</a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-state">
+        <h3>No spaces yet</h3>
+        <p>Create your first space to start sharing content!</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const photoInput = document.getElementById('id_photo');
+        const avatar = document.querySelector('.profile-avatar');
+        
+        photoInput.addEventListener('change', function(e) {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    avatar.src = e.target.result;
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    });
+</script>
 {% endblock %}

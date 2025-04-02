@@ -1,24 +1,150 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block heads %}
+{% block title %}Login - Quacker{% endblock %}
 
-<link rel="stylesheet" href="{% static 'home.css' %}">
-<link rel="stylesheet" href="{% static 'auth.css' %}">
+{% block extra_css %}
+<style>
+    .auth-container {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: var(--spacing-xl);
+    }
 
+    .auth-header {
+        text-align: center;
+        margin-bottom: var(--spacing-xl);
+    }
+
+    .auth-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .auth-subtitle {
+        color: var(--text-secondary);
+    }
+
+    .auth-form {
+        background-color: var(--surface-color);
+        border-radius: var(--border-radius-lg);
+        padding: var(--spacing-xl);
+        box-shadow: var(--shadow-md);
+    }
+
+    .form-group {
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: var(--spacing-xs);
+        font-weight: 500;
+        color: var(--text-primary);
+    }
+
+    .form-input {
+        width: 100%;
+        padding: var(--spacing-md);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius-md);
+        font-size: 1rem;
+        transition: all 0.2s ease;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .error-message {
+        color: var(--error-color);
+        margin-top: var(--spacing-xs);
+        font-size: 0.875rem;
+    }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: var(--spacing-lg);
+        color: var(--text-secondary);
+    }
+
+    .auth-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .auth-link:hover {
+        text-decoration: underline;
+    }
+
+    .alert {
+        padding: var(--spacing-md);
+        border-radius: var(--border-radius-md);
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .alert-error {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: var(--error-color);
+        border: 1px solid var(--error-color);
+    }
+
+    .alert-success {
+        background-color: rgba(34, 197, 94, 0.1);
+        color: var(--success-color);
+        border: 1px solid var(--success-color);
+    }
+</style>
 {% endblock %}
-{% block content %}
-<form method="POST">
-    {% csrf_token %}
-    <input type="text" name="username" placeholder="Username" required>
-    <input type="password" name="password" placeholder="Password" required>
-    <button type="submit">Login</button>
-    
-    {% if messages %}
-        {% for message in messages %}
-            <p class="{{ message.tags }}">{{ message }}</p>
-        {% endfor %}
-    {% endif %}
-</form>
 
+{% block content %}
+<div class="auth-container">
+    <div class="auth-header">
+        <h1 class="auth-title">Welcome Back</h1>
+        <p class="auth-subtitle">Login to access your spaces</p>
+    </div>
+
+    <div class="auth-form">
+        <form method="POST">
+            {% csrf_token %}
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="form-group">
+                <label for="id_username" class="form-label">Username</label>
+                <input type="text" name="username" id="id_username" class="form-input" required 
+                       placeholder="Enter your username">
+                {% if form.username.errors %}
+                    <div class="error-message">{{ form.username.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="id_password" class="form-label">Password</label>
+                <input type="password" name="password" id="id_password" class="form-input" required 
+                       placeholder="Enter your password">
+                {% if form.password.errors %}
+                    <div class="error-message">{{ form.password.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Login</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Don't have an account? <a href="{% url 'authView' %}" class="auth-link">Sign up</a></p>
+        </div>
+    </div>
+</div>
 {% endblock %}
