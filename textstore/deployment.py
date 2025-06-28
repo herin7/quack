@@ -4,7 +4,8 @@ import sys
 from .settings import *
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'unsafe-secret')
-DEBUG = os.environ.get('DEBUG')
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+
 
 ALLOWED_HOSTS = [os.environ.get('WEBSITE_HOSTNAME', 'quacker.azurewebsites.net')]
 CSRF_TRUSTED_ORIGINS = [
