@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv()
-
+import sys
 # Base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -40,7 +40,21 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'textstore.urls'
-
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'stream': sys.stdout,
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    },
+}
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
