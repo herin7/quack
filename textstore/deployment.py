@@ -1,16 +1,14 @@
 import os
 import re
+from .settings import *
 from .settings import BASE_DIR
 
-# Override secret key & debugging
 SECRET_KEY = os.environ['SECRET']
-DEBUG = False
-
-# Configure allowed hosts from Azure environment
 ALLOWED_HOSTS = [os.environ['WEBSITE_HOSTNAME']]
 CSRF_TRUSTED_ORIGINS = ['https://' + os.environ['WEBSITE_HOSTNAME']]
+DEBUG = False
 
-# WhiteNoise middleware for serving static files
+# WhiteNoise static file serving in production
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -25,7 +23,7 @@ MIDDLEWARE = [
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Azure PostgreSQL connection string
+# Use PostgreSQL from Azure Connection String
 conn_str = os.environ.get('AZURE_POSTGRESQL_CONNECTIONSTRING')
 
 if not conn_str:
@@ -37,9 +35,8 @@ if not conn_str:
         }
     }
 else:
-    # Parse Azure connection string
     conn_str_params = dict(re.findall(r'([^;=]+)=([^;]+)', conn_str.strip()))
-    
+
     required_keys = ['Database', 'User Id', 'Password', 'Server']
     if not all(k in conn_str_params for k in required_keys):
         raise ValueError("❌ Invalid connection string: missing required parameters")
@@ -58,7 +55,7 @@ else:
         }
     }
 
-# HTTPS and SSL security settings
+# HTTPS settings for security
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
