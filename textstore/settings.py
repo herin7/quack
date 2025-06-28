@@ -53,6 +53,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'textstore.wsgi.application'
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -64,10 +71,12 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static and Media
-STATIC_URL = 'storage/static/'
+# Static + Media
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static', BASE_DIR / 'storage/static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+MEDIA_URL = '/media/'
 
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
@@ -76,17 +85,16 @@ CLOUDINARY_STORAGE = {
 }
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-# CSRF and Security
+# CSRF + Security (BASE)
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SECURE_SSL_REDIRECT = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 CSRF_TRUSTED_ORIGINS = [
-    f"https://{os.environ.get('WEBSITE_HOSTNAME')}",
     "https://quacker-bxaaefasc6hwh4ek.southeastasia-01.azurewebsites.net",
 ]
 
-# Auth Redirects
+# Auth redirects
 LOGIN_REDIRECT_URL = 'home'
 LOGIN_URL = 'login'
 LOGOUT_REDIRECT_URL = '/'

@@ -2,19 +2,19 @@ import os
 import re
 import sys
 from .settings import *
-from .settings import BASE_DIR
 
-SECRET_KEY = os.environ['SECRET']
-ALLOWED_HOSTS = [os.environ['WEBSITE_HOSTNAME']]
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'unsafe-secret')
+DEBUG = False
+
+ALLOWED_HOSTS = [os.environ.get('WEBSITE_HOSTNAME', 'quacker.azurewebsites.net')]
 CSRF_TRUSTED_ORIGINS = [
     f"https://{os.environ.get('WEBSITE_HOSTNAME')}",
     "https://quacker-bxaaefasc6hwh4ek.southeastasia-01.azurewebsites.net"
 ]
-DEBUG = False
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # serve static files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -23,26 +23,17 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# Whitenoise static files
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Database setup
+# Azure PostgreSQL connection
 conn_str = os.environ.get('AZURE_POSTGRESQL_CONNECTIONSTRING')
 
 if not conn_str:
     print("⚠️ AZURE_POSTGRESQL_CONNECTIONSTRING not set — using SQLite fallback")
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        }
-    }
 else:
     conn_str_params = dict(re.findall(r'([^;=]+)=([^;]+)', conn_str.strip()))
-    required_keys = ['Database', 'User Id', 'Password', 'Server']
-    if not all(k in conn_str_params for k in required_keys):
-        raise ValueError("❌ Invalid connection string: missing required parameters")
-
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -51,13 +42,11 @@ else:
             'PASSWORD': conn_str_params['Password'],
             'HOST': conn_str_params['Server'],
             'PORT': '5432',
-            'OPTIONS': {
-                'sslmode': 'require',
-            },
+            'OPTIONS': {'sslmode': 'require'},
         }
     }
 
-# Security settings
+# Production Security Settings
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
@@ -80,7 +69,7 @@ LOGGING = {
     },
 }
 
-# Authentication redirects
+# Auth redirects
 LOGIN_REDIRECT_URL = 'home'
 LOGIN_URL = 'login'
 LOGOUT_REDIRECT_URL = '/'
