@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv()
+from .deployment import DATABASES
 
 # Base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -60,7 +61,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'textstore.wsgi.application'
 
 # Load DATABASES from deployment.py
-from .deployment import DATABASES
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
