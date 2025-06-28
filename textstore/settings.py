@@ -2,10 +2,52 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv()
-from .deployment import DATABASES
 
 # Base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
+import os
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+SECRET_KEY = os.environ.get("SECRET", "unsafe-key")
+
+DEBUG = False
+
+ALLOWED_HOSTS = [os.environ.get("WEBSITE_HOSTNAME", "localhost")]
+CSRF_TRUSTED_ORIGINS = [f"https://{os.environ.get('WEBSITE_HOSTNAME')}"]
+
+INSTALLED_APPS = [
+    # your apps...
+]
+
+MIDDLEWARE = [
+    # include 'whitenoise.middleware.WhiteNoiseMiddleware' if needed
+]
+
+ROOT_URLCONF = 'textstore.urls'
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ['DB_NAME'],
+        'USER': os.environ['DB_USER'],
+        'PASSWORD': os.environ['DB_PASSWORD'],
+        'HOST': os.environ['DB_HOST'],
+        'PORT': '5432',
+        'OPTIONS': {'sslmode': 'require'},
+    }
+}
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Secure headers for HTTPS
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 
 # Secret key
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'your-default-secret')
@@ -26,7 +68,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'cloudinary_storage',
     'cloudinary',
-    'storage',  # your app
+    'storage',  
 ]
 
 # Middleware
