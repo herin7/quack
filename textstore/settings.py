@@ -1,21 +1,16 @@
 import os
+import sys
 from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv()
-import sys
-# Base directory of the project
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Secret key
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'your-default-secret')
+DEBUG = False
 
-# Debug mode (only for local development)
-DEBUG = True
-
-# Hosts allowed for local
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
-# Installed applications
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -25,10 +20,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'cloudinary_storage',
     'cloudinary',
-    'storage',  
+    'storage',
 ]
 
-# Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -40,21 +34,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'textstore.urls'
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'stream': sys.stdout,
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'DEBUG',
-    },
-}
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -73,27 +53,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'textstore.wsgi.application'
 
-# Load DATABASES from deployment.py
-
-# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
 ]
 
-# Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files
+# Static and Media
 STATIC_URL = 'storage/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static', BASE_DIR / 'storage/static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Media files with Cloudinary
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
     'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
@@ -101,10 +76,35 @@ CLOUDINARY_STORAGE = {
 }
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-# Authentication
+# CSRF and Security
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+CSRF_TRUSTED_ORIGINS = [
+    f"https://{os.environ.get('WEBSITE_HOSTNAME')}",
+    "https://quacker-bxaaefasc6hwh4ek.southeastasia-01.azurewebsites.net",
+]
+
+# Auth Redirects
 LOGIN_REDIRECT_URL = 'home'
 LOGIN_URL = 'login'
 LOGOUT_REDIRECT_URL = '/'
 
-# Auto primary key
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'stream': sys.stdout,
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    },
+}
