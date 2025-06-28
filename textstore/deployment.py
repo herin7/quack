@@ -1,14 +1,16 @@
 import os
 import re
-from .settings import *
 from .settings import BASE_DIR
 
+# Override secret key & debugging
 SECRET_KEY = os.environ['SECRET']
-ALLOWED_HOSTS = [os.environ['WEBSITE_HOSTNAME']]
-CSRF_TRUSTED_ORIGINS = ['https://' + os.environ['WEBSITE_HOSTNAME']]
 DEBUG = False
 
-# WhiteNoise configuration
+# Configure allowed hosts from Azure environment
+ALLOWED_HOSTS = [os.environ['WEBSITE_HOSTNAME']]
+CSRF_TRUSTED_ORIGINS = ['https://' + os.environ['WEBSITE_HOSTNAME']]
+
+# WhiteNoise middleware for serving static files
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -23,7 +25,7 @@ MIDDLEWARE = [
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Database connection from Azure Connection String
+# Azure PostgreSQL connection string
 conn_str = os.environ.get('AZURE_POSTGRESQL_CONNECTIONSTRING')
 
 if not conn_str:
@@ -35,7 +37,7 @@ if not conn_str:
         }
     }
 else:
-    # Parse connection string
+    # Parse Azure connection string
     conn_str_params = dict(re.findall(r'([^;=]+)=([^;]+)', conn_str.strip()))
     
     required_keys = ['Database', 'User Id', 'Password', 'Server']
@@ -56,7 +58,7 @@ else:
         }
     }
 
-# HTTPS security headers
+# HTTPS and SSL security settings
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
