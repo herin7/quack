@@ -1,27 +1,21 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-
 load_dotenv()
 
-# Base directory
+# Base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Secret key
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'unsafe-key')
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'your-default-secret')
 
-# Debug and allowed hosts
-DEBUG = os.getenv("DEBUG", "False") == "True"
+# Debug mode (only for local development)
+DEBUG = True
+
+# Hosts allowed for local
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
-# If deployed to Azure, adjust allowed hosts and CSRF
-if "WEBSITE_HOSTNAME" in os.environ:
-    ALLOWED_HOSTS = [os.environ["WEBSITE_HOSTNAME"]]
-    CSRF_TRUSTED_ORIGINS = [f"https://{os.environ['WEBSITE_HOSTNAME']}"]
-else:
-    CSRF_TRUSTED_ORIGINS = []
-
-# Installed apps
+# Installed applications
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -31,7 +25,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'cloudinary_storage',
     'cloudinary',
-    'storage',
+    'storage',  
 ]
 
 # Middleware
@@ -46,9 +40,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'textstore.urls'
-WSGI_APPLICATION = 'textstore.wsgi.application'
 
-# Templates
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -65,18 +57,9 @@ TEMPLATES = [
     },
 ]
 
-# Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'postgres'),
-        'USER': os.environ.get('DB_USER', 'herin@quacker'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
-        'HOST': os.environ.get('DB_HOST', 'quacker.postgres.database.azure.com'),
-        'PORT': '5432',
-        'OPTIONS': {'sslmode': 'require'},
-    }
-}
+WSGI_APPLICATION = 'textstore.wsgi.application'
+
+# Load DATABASES from deployment.py
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -92,11 +75,11 @@ USE_I18N = True
 USE_TZ = True
 
 # Static files
-STATIC_URL = '/static/'
+STATIC_URL = 'storage/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static', BASE_DIR / 'storage/static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Cloudinary media
+# Media files with Cloudinary
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
     'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
@@ -109,11 +92,5 @@ LOGIN_REDIRECT_URL = 'home'
 LOGIN_URL = 'login'
 LOGOUT_REDIRECT_URL = '/'
 
-# Security for production
-SECURE_SSL_REDIRECT = not DEBUG
-SESSION_COOKIE_SECURE = not DEBUG
-CSRF_COOKIE_SECURE = not DEBUG
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-# Default primary key field type
+# Auto primary key
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
