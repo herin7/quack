@@ -1,38 +1,31 @@
+# textstore/settings/production.py
 import os
 import re
-import sys
-from .settings import *
+from .base import *
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'unsafe-secret')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-
 ALLOWED_HOSTS = [os.environ.get('WEBSITE_HOSTNAME', 'quacker.azurewebsites.net')]
 CSRF_TRUSTED_ORIGINS = [
     f"https://{os.environ.get('WEBSITE_HOSTNAME')}",
-    "https://quacker-bxaaefasc6hwh4ek.southeastasia-01.azurewebsites.net"
+    "https://quacker-bxaaefasc6hwh4ek.southeastasia-01.azurewebsites.net",
 ]
 
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # serve static files
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
-
-# Whitenoise static files
+# Whitenoise for static files
+MIDDLEWARE.append('whitenoise.middleware.WhiteNoiseMiddleware')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Azure PostgreSQL connection
 conn_str = os.environ.get('AZURE_POSTGRESQL_CONNECTIONSTRING')
-
 if not conn_str:
     print("⚠️ AZURE_POSTGRESQL_CONNECTIONSTRING not set — using SQLite fallback")
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 else:
     conn_str_params = dict(re.findall(r'([^;=]+)=([^;]+)', conn_str.strip()))
     DATABASES = {
@@ -47,30 +40,15 @@ else:
         }
     }
 
-# Production Security Settings
+# Production security settings
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# Logging
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'stream': sys.stdout,
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'DEBUG',
-    },
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
 }
-
-# Auth redirects
-LOGIN_REDIRECT_URL = 'home'
-LOGIN_URL = 'login'
-LOGOUT_REDIRECT_URL = '/'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
