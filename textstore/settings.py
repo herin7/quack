@@ -28,19 +28,26 @@ load_dotenv()
 # Parse the database URL
 tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': tmpPostgres.path.lstrip('/'),  # Remove leading slash
-        'USER': tmpPostgres.username,
-        'PASSWORD': tmpPostgres.password,
-        'HOST': tmpPostgres.hostname,
-        'PORT': tmpPostgres.port or 5432,  # Use parsed port or default to 5432
-        'OPTIONS': {
-            'sslmode': 'require',  # Add SSL mode from the connection string
+# Add to ALLOWED_HOSTS
+ALLOWED_HOSTS = [os.environ['WEBSITE_HOSTNAME'], '127.0.0.1']
+
+# Static files configuration for Azure
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Database configuration for Azure
+if 'WEBSITE_HOSTNAME' in os.environ:  # Running on Azure
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('AZURE_DB_NAME'),
+            'USER': os.getenv('AZURE_DB_USER'),
+            'PASSWORD': os.getenv('AZURE_DB_PASSWORD'),
+            'HOST': os.getenv('AZURE_DB_HOST'),
+            'PORT': os.getenv('AZURE_DB_PORT', '5432'),
+            'OPTIONS': {'sslmode': 'require'},
         }
     }
-}
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'storage/static',  # Point to the static folder in your app
