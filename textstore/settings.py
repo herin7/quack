@@ -57,10 +57,15 @@ STATICFILES_DIRS = [
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'false').lower() == 'true'
 
 # ALLOWED_HOSTS = []
-ALLOWED_HOSTS = ['quack-4fvm.onrender.com','127.0.0.1','quack-2.onrender.com']
+ALLOWED_HOSTS = [
+    host.strip() for host in os.getenv(
+        'ALLOWED_HOSTS',
+        'localhost,127.0.0.1,quack-2.onrender.com'
+    ).split(',') if host.strip()
+]
 
 
 # Application definition
@@ -75,10 +80,14 @@ INSTALLED_APPS = [
     'storage'
 ]
 CSRF_TRUSTED_ORIGINS = [
-    'https://quack-2.onrender.com', 
+    origin.strip() for origin in os.getenv(
+        'CSRF_TRUSTED_ORIGINS',
+        'https://quack-2.onrender.com'
+    ).split(',') if origin.strip()
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
